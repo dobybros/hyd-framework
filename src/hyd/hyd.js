@@ -189,6 +189,30 @@ var HYD = (function() {
       }
       var featureJson = this.features[jsFile];
       if (!featureJson) {
+        var featureJs = elmnt.getAttribute("js")
+        if(featureJs) {
+          var result = document.querySelectorAll('script[src="' + featureJs + '"]');
+          if(result.length === 0) {
+            var oHead = document.getElementsByTagName('HEAD').item(0);
+            var oScript= document.createElement("script");
+            oScript.type = "text/javascript";
+            oScript.src = featureJs;
+            oScript.onload = function(event){
+              event.currentTarget.setAttribute("loaded", "true");
+              console.log("async js loaded " + event.currentTarget.src);
+              hyd.initFeature(elmnt, obj)
+              // var script = document.querySelector('script[src="' + featureJs + '"]');
+              // hyd.eventManager.sendEvent("IMPORT_" + realPath, {type : "script", element : script});
+            }.bind(this);
+            oScript.onerror = function(event){
+              console.error("Async load featureJs ", featureJs, " event ", event)
+            }.bind(this);
+            oHead.appendChild(oScript);
+          } else {
+            console.warn("The featureJs is loading or loaded already. ", featureJs)
+          }
+        }
+
         console.warn("initFeature for " + jsFile + " not found");
         return;
       }
