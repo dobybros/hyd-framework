@@ -1,5 +1,6 @@
 const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const fs = require('fs')
 
 module.exports = (env) => {
   return {
@@ -13,6 +14,17 @@ module.exports = (env) => {
       chunkFilename: '[name].chunk.js',
       // library: '[name]',
       // libraryTarget: "window"
+    },
+    devServer: {
+      contentBase: './dist',
+      host: 'odev.itsroyal.me',
+      inline: false,
+      hot: false,
+      https: {
+        key: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.key'),
+        cert: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.pem'),
+        ca: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.pem'),
+      }
     },
     optimization: {
       minimize: false
