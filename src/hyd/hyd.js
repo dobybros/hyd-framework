@@ -306,7 +306,7 @@ var HYD = (function() {
               feature.unregisterAllEvents = unregisterAll;
 
               if (feature.view === undefined) {
-                var theData = undefined, theTemplate = undefined, theComponents = undefined;
+                var theData = undefined, theTemplate = undefined, theComponents = undefined, router = undefined;
                 if (hyd.isFunction(feature.viewData)) {
                   theData = feature.viewData();
                 } else if (hyd.isObject(feature.data)) {
@@ -322,6 +322,11 @@ var HYD = (function() {
                 } else if (hyd.isObject(feature.components)) {
                   theComponents = feature.components;
                 }
+                if (hyd.isFunction(feature.viewRouter)) {
+                  router = feature.viewRouter();
+                } else if (hyd.isObject(feature.router)) {
+                  router = feature.router;
+                }
               }
               featureMap.put(feature.id, feature);
               feature.onCreated(featureParams, featureObj);
@@ -330,7 +335,8 @@ var HYD = (function() {
                 feature.view = new Vue({
                   data: theData,
                   template: theTemplate,
-                  components: theComponents
+                  components: theComponents,
+                  router,
                 });
                 // 								var view = new feature.view();
                 // 								feature.view.feature = feature;
@@ -371,6 +377,9 @@ var HYD = (function() {
         var feature = featureMap.get(featureId);
         if (hyd.isObject(feature)) {
           feature.onDestroyed();
+          if(feature.view && this.isFunction(feature.view.$destroy)) {
+            feature.view.$destroy();
+          }
           console.log(feature.name + " onDestroyed");
           featureMap.remove(featureId)
           if (element.parentElement && !noRemoval)
@@ -378,7 +387,7 @@ var HYD = (function() {
         }
       }
     },
-    reloadFeature: function(element) {
+    reloadFeature: function(element, fob) {
       var featureId = element.getAttribute("fid");
       if (hyd.isString(featureId)) {
         var feature = featureMap.get(featureId);
@@ -392,7 +401,7 @@ var HYD = (function() {
         element.childNodes.forEach(function(item, index) {
           element.removeChild(item);
         })
-        hyd.initFeature(element);
+        hyd.initFeature(element, fob);
       }
     },
     /**

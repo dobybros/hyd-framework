@@ -15,17 +15,17 @@ module.exports = (env) => {
       // library: '[name]',
       // libraryTarget: "window"
     },
-    devServer: {
-      contentBase: './dist',
-      host: 'odev.itsroyal.me',
-      inline: false,
-      hot: false,
-      https: {
-        key: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.key'),
-        cert: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.pem'),
-        ca: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.pem'),
-      }
-    },
+    // devServer: {
+    //   contentBase: './dist',
+    //   host: 'odev.itsroyal.me',
+    //   inline: false,
+    //   hot: false,
+    //   https: {
+    //     key: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.key'),
+    //     cert: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.pem'),
+    //     ca: fs.readFileSync('/home/royal/dev/cert/odev.itsroyal.me/2099842_odev.itsroyal.me.pem'),
+    //   }
+    // },
     optimization: {
       minimize: false
     },
