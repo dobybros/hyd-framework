@@ -9,15 +9,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "clean-webpack-plugin": "^1.0.1",
+    "vant": "^2.2.16",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1",
-    "clean-webpack-plugin": "^1.0.1"
+    "webpack-dev-server": "^3.2.1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "app-data-folder": "^1.0.0",
+    "js-cookie": "^2.2.1",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3"
   }
