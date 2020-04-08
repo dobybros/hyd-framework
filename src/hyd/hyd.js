@@ -241,13 +241,11 @@ var HYD = (function() {
         return;
       }
       id = elmnt.getAttribute("id");
-      var allAttributeNames = elmnt.getAttributeNames();
+      var allAttribute = elmnt.attributes;
       var params = {}
-      for (let i = 0; i < allAttributeNames.length; i++) {
-        let key = allAttributeNames[i];
-        if (key == "name" || key == "loaded" || key == "fid") {
-          continue;
-        }
+      for (let i = 0; i < allAttribute.length; i++) {
+        let attribute = allAttribute[i];
+        var key = attribute.nodeName
         params[key] = elmnt.getAttribute(key);
       }
       elmnt.featureParams = params;
