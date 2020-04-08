@@ -1,4 +1,4 @@
-const {ipcRenderer} = window.require('electron')
+const {ipcRenderer} = require('electron')
 
 class HydElectronRenderer {
   constructor() {
@@ -41,6 +41,7 @@ class HydElectronRenderer {
   _injectHyd() {
     hyd.sendEvent = this._sendEvent.bind(this)
     hyd.registerEvent = this._registerEvent.bind(this)
+    hyd.ipcSendSync = this._sendSync.bind(this)
   }
 
   _sendEvent(event, data, timeout = 0) {
@@ -72,6 +73,10 @@ class HydElectronRenderer {
         resolve()
       }
     })
+  }
+  _sendSync(event, data) {
+    const result = ipcRenderer.sendSync(event, data)
+    return result
   }
 
   _registerEvent(key, event, observer) {
@@ -114,14 +119,16 @@ class HydElectronRenderer {
       const hydFeature = document.createElement('hyd-feature')
       hydFeature.setAttribute('name', message)
       document.body.appendChild(hydFeature)
-      hyd.initFeatures()
+      setTimeout(() => {
+        hyd.initFeatures()
+      }, 100);
     })
     ipcRenderer.on('hydEvent.forward', (e, message) => {
       const {event, data} = message
+      console.log('event froward111', event, data)
       this._originSender(event, data)
     })
     ipcRenderer.on('hydEvent.result', (e, message) => {
-      debugger
       const {result, forId} = message
       const id = forId
       if (this._waitingResultPromises[id]) {
@@ -133,4 +140,7 @@ class HydElectronRenderer {
   }
 }
 
-new HydElectronRenderer()
+window.addEventListener('load', function () {
+  new HydElectronRenderer()
+})
+

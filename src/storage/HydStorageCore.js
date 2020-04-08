@@ -15,7 +15,7 @@
 // hyd.localStorage.clear
 
 const appDataFolder = require('app-data-folder')
-const SecretMaster = require('../../../src/lib/SecretMaster.js')
+const SecretMaster = require('../libs/SecretMaster.js')
 const fs = require('fs')
 const path = require('path')
 const { ipcMain } = require('electron')
@@ -71,6 +71,11 @@ class HydStorage {
             this.clear(sudo)
             event.returnValue = undefined
         })
+        ipcMain.on('hydEvent.removeStorageItem', (event, msg = {}) => {
+            let { keys, sudo } = msg
+            this.removeItems(keys, sudo)
+            event.returnValue = undefined
+        })
     }
     setItem(key, value) {
         // 支持key, value; Object的存储
@@ -104,6 +109,20 @@ class HydStorage {
             return returnArray
         } else {
             return undefined
+        }
+    }
+    removeItems(keys, sudo) {
+        if (this.judgeType(keys) === 'String') {
+            if (this.STORAGE[keys]) {
+                delete this.STORAGE[keys]
+            }
+        } else if (this.judgeType(keys) === 'Array') {
+            keys.forEach(key => {
+                this.removeItems(key, false)
+            });
+        }
+        if (sudo) {
+            this._commitStorage()
         }
     }
     clear(sudo) {

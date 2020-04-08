@@ -4,6 +4,7 @@ const fs = require('fs')
 
 module.exports = (env) => {
   return {
+    mode: 'production',
     entry: {
       'hyd': path.resolve(__dirname, 'src', 'index.js')
     },
