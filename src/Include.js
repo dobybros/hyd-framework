@@ -1,8 +1,12 @@
 const path = require('path')
 
 module.exports = (basePath) => {
-  return function (relativePath) {
+  return function (relativePath, templatePath) {
     let absolutePath = path.resolve(basePath, relativePath)
+    let templateAbsolutePath
+    if (templatePath) {
+      templateAbsolutePath = path.resolve(templatePath)
+    }
     if (path.extname(absolutePath) !== '.js') {
       absolutePath += '.js'
     }
@@ -16,6 +20,7 @@ module.exports = (basePath) => {
     })
     return {
       path: absolutePath,
+      templatePath: templateAbsolutePath,
       name
     }
   }

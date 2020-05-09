@@ -53,9 +53,19 @@ class HydElectron {
   launch() {
     this._registerEvents()
     app.once('ready', () => {
-      this._loadFeatures()
       this._loadServices()
+      this._loadFeatures()
     })
+  }
+  getFeatureWindow(featureName) {
+    return this._features[featureName]
+  }
+  getServiceWindow(serviceName) {
+    return this._services[serviceName]
+  }
+
+  registerIpcEvent(event, callback) {
+    ipcMain.on(event, callback)
   }
 
   _registerEvents() {
