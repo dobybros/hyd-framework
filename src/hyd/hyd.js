@@ -1,9 +1,11 @@
-import Vue from 'vue'
+import Vue from 'vue/dist/vue.esm.js'
 import { ArrayList } from "../utils/ArrayList";
 import { HashMap } from "../utils/HashMap";
 import { EventManager } from "../events/EventManager";
 import SortedMap from "../utils/SortedMap";
+import VueRouter from 'vue-router'
 
+Vue.use(VueRouter)
 
 console.log("[[[HYD framework based on VUE]]]");
 var HYD = (function() {
@@ -172,7 +174,7 @@ var HYD = (function() {
     initFeatures: function() {
       var z, i, elmnt;
 
-      z = document.querySelectorAll('hyd-feature');
+      z = document.querySelectorAll('#hydFeature');
       for (i = 0; i < z.length; i++) {
         elmnt = z[i];
         this.initFeature(elmnt);
@@ -334,7 +336,7 @@ var HYD = (function() {
                   data: theData,
                   template: theTemplate,
                   components: theComponents,
-                  router,
+                  router
                 });
                 // 								var view = new feature.view();
                 // 								feature.view.feature = feature;
