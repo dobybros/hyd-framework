@@ -101,6 +101,21 @@ var HYD = (function() {
       return (idStr);
     },
 
+    registerGlobalPerm: function(key, obj) {
+      Vue.use(function(v) {
+        v.mixin({
+          beforeCreate() {
+            this.public = {}
+          },
+          created() {
+            console.error(this._uid)
+            // this.$data[key] = obj
+            this.$set(this.public, key, obj)
+          },
+        })
+      })
+    },
+
     stringToFunction: function(str) {
       var arr = str.split(".");
 
@@ -355,7 +370,7 @@ var HYD = (function() {
         var container = document.createElement("div");
         container.id = elmnt.getAttribute("id");
         elmnt.setAttribute("fid", container.id);
-        elmnt.removeAttribute("id");
+        elmnt.setAttribute("id", 'hydFeature');
         elmnt.appendChild(container);
         elmnt.setAttribute("loaded", "true");
         // 							element.parentNode.replaceChild(container, element);
