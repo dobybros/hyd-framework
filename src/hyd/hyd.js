@@ -189,7 +189,7 @@ var HYD = (function() {
     initFeatures: function() {
       var z, i, elmnt;
 
-      z = document.querySelectorAll('#hydFeature');
+      z = document.querySelectorAll('div[hyd="feature"]');
       for (i = 0; i < z.length; i++) {
         elmnt = z[i];
         this.initFeature(elmnt);
@@ -370,7 +370,8 @@ var HYD = (function() {
         var container = document.createElement("div");
         container.id = elmnt.getAttribute("id");
         elmnt.setAttribute("fid", container.id);
-        elmnt.setAttribute("id", 'hydFeature');
+        // elmnt.setAttribute("id", 'hydFeature');
+        elmnt.removeAttribute("id");
         elmnt.appendChild(container);
         elmnt.setAttribute("loaded", "true");
         // 							element.parentNode.replaceChild(container, element);
