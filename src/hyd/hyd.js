@@ -101,6 +101,10 @@ var HYD = (function() {
       return (idStr);
     },
 
+    use: function(external, options) {
+      Vue && Vue.use && Vue.use(external, options);
+    },
+
     registerGlobalPerm: function(key, obj) {
       Vue.use(function(v) {
         v.mixin({
