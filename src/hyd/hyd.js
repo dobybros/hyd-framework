@@ -158,7 +158,9 @@ var HYD = (function() {
         this.eventObserverMap = {}
       }
       if(!hyd.isString(key) && key.constructor) {
-        key = key.constructor.name
+        const generateId = this.generateId()
+        key._registerHydEventKey = generateId
+        key = key._registerHydEventKey
       }
       var list = this.eventObserverMap[key]
       if (!list) {
@@ -175,7 +177,7 @@ var HYD = (function() {
       if(!key)
         throw "key can not be null while unregisterEvent"
       if(!hyd.isString(key) && key.constructor) {
-        key = key.constructor.name
+        key = key._registerHydEventKey
       }
       if (this.eventObserverMap) {
         var list = this.eventObserverMap[key]
