@@ -176,7 +176,7 @@ var HYD = (function() {
     unregisterEvent: function(key) {
       if(!key)
         throw "key can not be null while unregisterEvent"
-      if(!hyd.isObject(key)) {
+      if(hyd.isObject(key)) {
         key = key._registerHydEventKey
       }
       if (this.eventObserverMap) {
