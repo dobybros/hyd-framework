@@ -158,7 +158,7 @@ var HYD = (function() {
         this.eventObserverMap = {}
       }
       if(hyd.isObject(key)) {
-        if (!key._registerHydEventKey) {
+        if(!key._registerHydEventKey) {
           const generateId = this.generateId()
           key._registerHydEventKey = generateId
         }
