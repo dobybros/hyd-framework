@@ -578,7 +578,7 @@ var HYD = (function() {
 
     isFunction: function(functionToCheck) {
       var getType = {};
-      return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
+      return functionToCheck && (getType.toString.call(functionToCheck) == '[object Function]' || getType.toString.call(functionToCheck) == '[object AsyncFunction]');
     },
 
     isArray: function(obj) {
