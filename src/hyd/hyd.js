@@ -252,7 +252,7 @@ var HYD = (function() {
         //   }
         // }.bind(this));
         featureJson.asyncImport().then(data => {
-          this.initFeature(element);
+          this.initFeature(element, featureObj);
         }).catch(reason => {
           console.error("Async import " + jsFile + " failed, " + reason);
         });
