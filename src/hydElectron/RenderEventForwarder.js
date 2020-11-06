@@ -71,14 +71,19 @@ class RenderEventForwarder {
     this.forwardToMain(ev.sender, event, data)
   }
 
-  forwardToRender(sender, event, data) {
+  forwardToRender(sender, event, data, forceContent) {
     if (sender === 'main') {
-      const contents = this._registeredWebContents[event]
+      let contents = this._registeredWebContents[event]
+      if (forceContent !== undefined) {
+        if (typeof forceContent === 'object' && forceContent.send) {
+          contents = [forceContent]
+        }
+      }
       if (contents) {
         const errorItems = []
         contents.forEach((content, index) => {
           try {
-            content.send('hydEvent.forward', {event, data})
+            content.send('hydEvent.forward', {event, data: Object.assign({}, {from: 'asd'}, data)})
           } catch (e) {
             errorItems.unshift(index)
           }
@@ -100,4 +105,4 @@ class RenderEventForwarder {
 }
 
 instance = new RenderEventForwarder()
-module.exports = RenderEventForwarder
+module.exports = instance

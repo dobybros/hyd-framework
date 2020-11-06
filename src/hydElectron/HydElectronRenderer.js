@@ -2,11 +2,16 @@ const {ipcRenderer} = require('electron')
 
 class HydElectronRenderer {
   constructor() {
-    this._originSender = hyd.sendEvent
-    this._originRegisterer = hyd.registerEvent
+    this._originSender = hyd.sendEvent.bind(hyd)
+    this._originRegisterer = hyd.registerEvent.bind(hyd)
     this._waitingResultPromises = {}
+    // 预处理事件缓存
+    this._preHandleEvents = {}
     this._injectHyd()
     this._registerCommunication()
+
+    window.launch = this.launch.bind(this)
+
   }
 
   static random(len, radix) {
@@ -98,7 +103,15 @@ class HydElectronRenderer {
           }
         }
         try {
-          observer.callback(type, obj, doneCallback)
+          if (typeof observer === 'function')  {
+            observer(type, obj, doneCallback)
+          } else if (observer.callback && typeof observer.callback === 'function') {
+            if (observer.scope) {
+              observer.callback.call(observer.scope, type, obj, doneCallback)
+            } else {
+              observer.callback(type, obj, doneCallback)
+            }
+          }
         } catch (err) {
           if (obj._id && that._waitingResultPromises[obj._id]) {
             that._waitingResultPromises[obj._id].reject(err)
@@ -107,6 +120,15 @@ class HydElectronRenderer {
         }
       }
     })
+    // 判断是否有已经存在的Events，如果有的话就直接触发
+    if (this._preHandleEvents[event] && this._preHandleEvents[event].length > 0) {
+      const waitEvents = this._preHandleEvents[event]
+      waitEvents.forEach(data => {
+        this._originSender(event, data)
+      });
+      
+      delete this._preHandleEvents[event];
+    }
     try {
       ipcRenderer.send('hydEvent.register', event)
     } catch (error) {
@@ -115,13 +137,12 @@ class HydElectronRenderer {
   }
 
   _registerCommunication() {
-    ipcRenderer.on('hydEvent.initHydRoot', (e, message) => {
-      const hydFeature = document.createElement('hyd-feature')
-      hydFeature.setAttribute('name', message)
+    ipcRenderer.on('hydEvent.initHydRoot', (e, { name, type }) => {
+      const hydFeature = document.createElement('div')
+      hydFeature.setAttribute('hyd', type)
+      hydFeature.setAttribute('name', name)
       document.body.appendChild(hydFeature)
-      setTimeout(() => {
-        hyd.initFeatures()
-      }, 100);
+      hyd.initFeatures()
     })
     ipcRenderer.on('hydEvent.forward', (e, message) => {
       const {event, data} = message
@@ -136,11 +157,21 @@ class HydElectronRenderer {
         delete this._waitingResultPromises[id]
       }
     })
+    console.log(window.preHandleEvents, Date.now())
+  }
+  
+  launch(preHandleEvents) {
+    console.log('asd',JSON.stringify(preHandleEvents))
+    if (preHandleEvents) {
+      this._preHandleEvents = preHandleEvents
+    }
     ipcRenderer.send('hydEvent.hydReady')
   }
 }
 
 window.addEventListener('load', function () {
+  window.yes = true
+  console.log(window.preHandleEvents, Date.now())
   new HydElectronRenderer()
 })
 

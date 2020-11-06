@@ -1,18 +1,18 @@
+/*
+ * @Author: ZerroRt
+ * @lastEditors: ZerroRt
+ * @Date: 2019-12-23 15:40:40
+ * @LastEditTime: 2020-11-05 15:09:48
+ * @FilePath: \hyd-framework\src\hydElectron\window\ServiceWindow.js
+ */
 const {BrowserWindow} = require('electron')
 const HydWindow = require("./HydWindow");
-const { debug } = require('../../../versionDiffConfig/acu.config.json')
 const eventManager = require('../EventManager').getInstance()
 const path = require('path')
-const hydBaseUrl = "https://sysloginfrompc.wonderchats.com"
-
-let webpackConfig;
-if (debug) {
-  webpackConfig = require('../../../../config/webpack.config')
-}
 
 class ServiceWindow extends HydWindow {
-  constructor(serviceDefine) {
-    super()
+  constructor(serviceDefine, debug, webpackConfig) {
+    super(debug, webpackConfig)
     this._serviceDefine = serviceDefine
     this._electronWindow = null
     this._initServiceWindow()
@@ -36,20 +36,11 @@ class ServiceWindow extends HydWindow {
       }, this._serviceDefine.window))
       this._electronWindow = window
       const name = path.basename(this._serviceDefine.service.path, '.js')
-      if (debug) {
-        window.openDevTools()
-        const {host, port} = webpackConfig.devServer
-        const protocol = webpackConfig.devServer.https ? 'https' : 'http'
-        // const serviceUrl = (hydBaseUrl  || `${protocol}://${host}:${port}`) + `/${name}.html`
-        // await window.loadURL(serviceUrl)
-        const serviceUrl = hydBaseUrl + `/${name}.html`
-        window.loadURL(serviceUrl)
-      } else {
-        const serviceUrl = path.join(__dirname, `../../../dist/${name}.html`)
-        window.loadFile(serviceUrl)
-      }
+      this._loadWindow(path.basename(this._featureDefine.feature.path, '.js'))
       if ((typeof done).indexOf('function') !== -1) {
-        done()
+        setTimeout(() => {
+          done()
+        }, 0);
       }
     } else {
       this._electronWindow.close()

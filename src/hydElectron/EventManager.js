@@ -1,4 +1,11 @@
-const {uuid} = require('../utils/UUID')
+/*
+ * @Author: ZerroRt
+ * @lastEditors: ZerroRt
+ * @Date: 2019-12-23 15:40:39
+ * @LastEditTime: 2020-11-06 16:17:32
+ * @FilePath: \hyd-framework\src\hydElectron\EventManager.js
+ */
+const {uuid} = require('./utils/UUID')
 
 let instance
 
@@ -16,10 +23,21 @@ class EventManager {
   }
 
   registerEvent(event, listener) {
-    if (!this._registeredEvents[event]) {
-      this._registeredEvents[event] = []
+    if (typeof event === 'array' && event.length > 0) {
+      let tempEvent = event.shift()
+      if (!this._registeredEvents[tempEvent]) {
+        this._registeredEvents[tempEvent] = []
+      }
+      this._registeredEvents[tempEvent].push(listener)
+      this.registerEvent(event, listener)
+    } else if (typeof event === 'string') {
+      if (!this._registeredEvents[event]) {
+        this._registeredEvents[event] = []
+      }
+      this._registeredEvents[event].push(listener)
+    } else {
+      return
     }
-    this._registeredEvents[event].push(listener)
   }
 
   unregisterEvent(event, listener) {
@@ -40,7 +58,7 @@ class EventManager {
   sendEvent(event, originData, needForward, timeout) {
     const data = originData || {}
     if  (typeof data !== 'object') {
-      throw new Error('Payload data must be object!')
+      return
     }
 
     return new Promise((resolve, reject) => {
@@ -60,7 +78,7 @@ class EventManager {
             setTimeout(() => {
               listener(data, result => {
                 this.resolveWaitingResultPromise(id, result)
-              })
+              }, event)
             }, 0)
           }
         })
