@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-06 17:13:54
+ * @LastEditTime: 2020-11-09 11:16:57
  * @FilePath: \hyd-framework\src\hydElectron\window\FeatureWindow.js
  */
 const { BrowserWindow, screen } = require('electron')
@@ -85,9 +85,6 @@ class FeatureWindow extends HydWindow {
           }
           this._electronWindow.show();
         }
-      })
-      this._electronWindow.on('close', () => {
-        this._electronWindow = null;
       })
     } else {
       try {

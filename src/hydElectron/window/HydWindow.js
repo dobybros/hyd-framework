@@ -2,11 +2,12 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-06 11:29:14
- * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
+ * @LastEditTime: 2020-11-09 11:54:11
+ * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
 const RenderEventForwarder = require('../RenderEventForwarder')
+const { ipcMain } = require('electron')
 const path = require('path')
 class HydWindow {
   constructor(debug, webpackConfig) {
@@ -19,8 +20,11 @@ class HydWindow {
       this.fileOutput = Object.assign({}, output, webpackConfig.output || {})
     }
     this._exitPromise = new Promise((resolve, reject) => {
-
+      this.__exitPromiseObj = { resolve, reject }
+      this._sendCloseWindow()
     })
+
+
   }
 
   _loadWindow(name) {
@@ -42,6 +46,12 @@ class HydWindow {
     }
   }
 
+  _sendCloseWindow() {
+    if (this._electronWindow && this._electronWindow.webContents) {
+      this._electronWindow.webContents.send('hydEvent.windowWillClose')
+    }
+  }
+
   generateWindowFromEvent(data, done, eventName) {
     this._preHandleEvents[eventName] = this._preHandleEvents[eventName] || []
     this._preHandleEvents[eventName].push(data)
@@ -49,7 +59,29 @@ class HydWindow {
       this.generate(data, () => {
           (typeof done === 'function') && done()
       })
+      this._electronWindow.on('close', event => {
+        event.preventDefault();
+        this._sendCloseWindow()
+      })
+      const webContentsId = this._electronWindow.webContents.id
+      ipcMain.on('hydEvent.closeCurrentWindow_window' + webContentsId, this.windowClose.bind(this))
     }
+  }
+
+  windowClose(_, close, reason) {
+    if (close) {
+      if (this._electronWindow) {
+        this.destroy()
+      }
+      if (this.__exitPromiseObj) {
+        this.__exitPromiseObj.resolve()
+      }
+    } else {
+      if (this.__exitPromiseObj) {
+        this.__exitPromiseObj.reject(reason)
+      }
+    }
+    this.__exitPromiseObj = null
   }
 
   get window() {

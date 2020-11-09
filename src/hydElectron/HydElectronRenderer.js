@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const remote = require('electron').remote
 
 class HydElectronRenderer {
   constructor() {
@@ -11,7 +12,6 @@ class HydElectronRenderer {
     this._registerCommunication()
 
     window.launch = this.launch.bind(this)
-
   }
 
   static random(len, radix) {
@@ -126,7 +126,7 @@ class HydElectronRenderer {
       waitEvents.forEach(data => {
         this._originSender(event, data)
       });
-      
+
       delete this._preHandleEvents[event];
     }
     try {
@@ -157,11 +157,28 @@ class HydElectronRenderer {
         delete this._waitingResultPromises[id]
       }
     })
+    ipcRenderer.on('hydEvent.windowWillClose', (e, message) => {
+      this._originSender('windowWillClose', {
+        type: 'hydElectronWindowClose',
+        close: this.closeWindow.bind(this)
+      })
+    })
     console.log(window.preHandleEvents, Date.now())
   }
-  
+
+/**
+ * @description: closeWindowCallback
+ * @param {Boolean, string} close: will close, reason: if not close, why 
+ * @return {*}
+ */  
+
+  closeWindow(close, reason) {
+    const webContents = remote.getCurrentWebContents()
+    const renderId = webContents.id
+    ipcRenderer.send('hydEvent.closeCurrentWindow_window' + renderId, close, reason)
+  }
+
   launch(preHandleEvents) {
-    console.log('asd',JSON.stringify(preHandleEvents))
     if (preHandleEvents) {
       this._preHandleEvents = preHandleEvents
     }
@@ -170,8 +187,6 @@ class HydElectronRenderer {
 }
 
 window.addEventListener('load', function () {
-  window.yes = true
-  console.log(window.preHandleEvents, Date.now())
-  new HydElectronRenderer()
+  window.hydElectronRenderer = new HydElectronRenderer()
 })
 
