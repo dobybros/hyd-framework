@@ -39,7 +39,6 @@ class HydElectronRenderer {
         }
       }
     }
-
     return uuid.join('');
   }
 
@@ -172,16 +171,26 @@ class HydElectronRenderer {
  * @return {*}
  */  
 
-  closeWindow(close, reason) {
-    const webContents = remote.getCurrentWebContents()
-    const renderId = webContents.id
-    ipcRenderer.send('hydEvent.closeCurrentWindow_window' + renderId, close, reason)
+  closeWindow(close = true, reason) {
+    ipcRenderer.send('hydEvent.closeCurrentWindow', this.windowId, close, reason)
   }
 
-  launch(preHandleEvents) {
+  setWindowSize({ width, height }) {
+    const currentWindow = remote.getCurrentWindow()
+    const beforeResizable = currentWindow.resizable
+    currentWindow.resizable = true
+    currentWindow.setSize(width, height)
+    currentWindow.resizable = beforeResizable
+    // ipcRenderer.send('hydEvent.setCurrentWindowStatus', this.windowId, {
+    //   width, height
+    // })
+  }
+
+  launch(preHandleEvents, windowId) {
     if (preHandleEvents) {
       this._preHandleEvents = preHandleEvents
     }
+    this.windowId = windowId
     ipcRenderer.send('hydEvent.hydReady')
   }
 }

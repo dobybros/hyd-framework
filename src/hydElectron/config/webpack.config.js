@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2020-11-03 18:34:37
- * @LastEditTime: 2020-11-06 18:19:48
+ * @LastEditTime: 2020-11-09 14:49:27
  * @FilePath: \hyd-framework\src\hydElectron\config\webpack.config.js
  */
 const VueLoaderPlugin = require("vue-loader/lib/plugin")
@@ -51,6 +51,11 @@ module.exports = {
         'css-loader',
         'less-loader'
       ]
+    }, {
+      test: /\.(proto|mp4)$/,
+      use: {
+        loader: 'file-loader'
+      }
     }]
   },
   resolve: {

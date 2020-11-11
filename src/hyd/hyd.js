@@ -569,7 +569,7 @@ var HYD = (function() {
 
 
     isObject: function(obj) {
-      return {}.toString.apply(obj) === '[object Object]';
+      return Object.prototype.toString.call(obj) === '[object Object]';
     },
 
     isInt: function(x) {

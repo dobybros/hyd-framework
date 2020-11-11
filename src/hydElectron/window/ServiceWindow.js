@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:40
- * @LastEditTime: 2020-11-05 15:09:48
+ * @LastEditTime: 2020-11-10 11:46:36
  * @FilePath: \hyd-framework\src\hydElectron\window\ServiceWindow.js
  */
 const {BrowserWindow} = require('electron')
@@ -12,7 +12,7 @@ const path = require('path')
 
 class ServiceWindow extends HydWindow {
   constructor(serviceDefine, debug, webpackConfig) {
-    super(debug, webpackConfig)
+    super('service', debug, webpackConfig)
     this._serviceDefine = serviceDefine
     this._electronWindow = null
     this._initServiceWindow()

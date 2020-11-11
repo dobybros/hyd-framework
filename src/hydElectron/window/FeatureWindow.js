@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-09 11:16:57
+ * @LastEditTime: 2020-11-10 11:46:26
  * @FilePath: \hyd-framework\src\hydElectron\window\FeatureWindow.js
  */
 const { BrowserWindow, screen } = require('electron')
@@ -12,7 +12,7 @@ const eventManager = require('../EventManager').getInstance()
 
 class FeatureWindow extends HydWindow {
   constructor(featureDefine, debug, webpackConfig) {
-    super(debug, webpackConfig)
+    super('feature', debug, webpackConfig)
     this._featureDefine = featureDefine
     this._electronWindow = null
     this._initFeatureWindow()
@@ -74,7 +74,7 @@ class FeatureWindow extends HydWindow {
       this._electronWindow.once('ready-to-show', () => {
         if (this._preHandleEvents) {
           const sendPreHandleEvents = JSON.parse(JSON.stringify(this._preHandleEvents))
-          this._electronWindow.webContents.executeJavaScript("window.launch(" + JSON.stringify(sendPreHandleEvents) + ")")
+          this._electronWindow.webContents.executeJavaScript("window.launch(" + JSON.stringify(sendPreHandleEvents) + ", '" + this.windowId + "')")
           this._preHandleEvents = {}
         }
         if ((typeof done).indexOf('function') !== -1) {

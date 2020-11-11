@@ -2,16 +2,21 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-09 11:54:11
- * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\HydWindow.js
+ * @LastEditTime: 2020-11-10 11:50:06
+ * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
 const RenderEventForwarder = require('../RenderEventForwarder')
 const { ipcMain } = require('electron')
 const path = require('path')
+const {uuid} = require('../utils/UUID.js')
+
+const windowManager = require('./WindowManager.js')
+
 class HydWindow {
-  constructor(debug, webpackConfig) {
+  constructor(type, debug, webpackConfig) {
     this._electronWindow = null
+    this.windowType = type
 
     this.finallyDevStatus = Object.assign({}, devServer, webpackConfig.devServer || {})
     this.debug = debug
@@ -23,8 +28,9 @@ class HydWindow {
       this.__exitPromiseObj = { resolve, reject }
       this._sendCloseWindow()
     })
+    this.windowId = uuid(10)
 
-
+    windowManager.addWindow(this.windowType, this)
   }
 
   _loadWindow(name) {
@@ -64,11 +70,10 @@ class HydWindow {
         this._sendCloseWindow()
       })
       const webContentsId = this._electronWindow.webContents.id
-      ipcMain.on('hydEvent.closeCurrentWindow_window' + webContentsId, this.windowClose.bind(this))
     }
   }
 
-  windowClose(_, close, reason) {
+  windowClose(close, reason) {
     if (close) {
       if (this._electronWindow) {
         this.destroy()
@@ -84,6 +89,12 @@ class HydWindow {
     this.__exitPromiseObj = null
   }
 
+  setWindow({ width, height, x, y }) {
+    if (!this.isDestroyed()) {
+      this._electronWindow.setSize(width, height, true)
+    }
+  }
+
   get window() {
     return this._electronWindow
   }
@@ -95,8 +106,10 @@ class HydWindow {
     this._electronWindow.on(event, callback)
   }
   destroy() {
-    this._electronWindow && this._electronWindow.destroy()
-    this._electronWindow = null
+    if (!this.isDestroyed()) {
+      this._electronWindow && this._electronWindow.destroy()
+      this._electronWindow = null
+    }
   }
   setBounds(options) {
     this._electronWindow.setBounds(options)
@@ -116,6 +129,10 @@ class HydWindow {
   }
   openDevTools() {
     this._electronWindow.openDevTools()
+  }
+
+  release() {
+    this.destroy()
   }
 }
 
