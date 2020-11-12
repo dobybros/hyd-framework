@@ -175,6 +175,14 @@ class HydElectronRenderer {
     ipcRenderer.send('hydEvent.closeCurrentWindow', this.windowId, close, reason)
   }
 
+  shutdown() {
+    try {
+      require('electron').remote.getCurrentWindow().destroy()
+    } catch (error) {
+      
+    }
+  }
+
   setWindowSize({ width, height }) {
     const currentWindow = remote.getCurrentWindow()
     const beforeResizable = currentWindow.resizable
