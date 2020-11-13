@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-10 11:50:06
+ * @LastEditTime: 2020-11-12 15:20:28
  * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
@@ -50,6 +50,10 @@ class HydWindow {
         console.error(error)
       }
     }
+
+    window.once('closed', () => {
+      this.destroy()
+    })
   }
 
   _sendCloseWindow() {
@@ -69,7 +73,6 @@ class HydWindow {
         event.preventDefault();
         this._sendCloseWindow()
       })
-      const webContentsId = this._electronWindow.webContents.id
     }
   }
 
@@ -108,8 +111,8 @@ class HydWindow {
   destroy() {
     if (!this.isDestroyed()) {
       this._electronWindow && this._electronWindow.destroy()
-      this._electronWindow = null
     }
+    this._electronWindow = null
   }
   setBounds(options) {
     this._electronWindow.setBounds(options)

@@ -177,18 +177,30 @@ class HydElectronRenderer {
 
   shutdown() {
     try {
-      require('electron').remote.getCurrentWindow().destroy()
+      if (!this._currentWindow) {
+        this._currentWindow = remote.getCurrentWindow()
+      }
+      this._currentWindow.destroy()
     } catch (error) {
       
     }
   }
 
+  setWindowPassthrough(pass) {
+    if (!this._currentWindow) {
+      this._currentWindow = remote.getCurrentWindow()
+    }
+    this._currentWindow.setIgnoreMouseEvents(pass, pass?{forward: true}:undefined)
+  }
+
   setWindowSize({ width, height }) {
-    const currentWindow = remote.getCurrentWindow()
-    const beforeResizable = currentWindow.resizable
-    currentWindow.resizable = true
-    currentWindow.setSize(width, height)
-    currentWindow.resizable = beforeResizable
+    if (!this._currentWindow) {
+      this._currentWindow = remote.getCurrentWindow()
+    }
+    const beforeResizable = this._currentWindow.resizable
+    this._currentWindow.resizable = true
+    this._currentWindow.setSize(width, height)
+    this._currentWindow.resizable = beforeResizable
     // ipcRenderer.send('hydEvent.setCurrentWindowStatus', this.windowId, {
     //   width, height
     // })
