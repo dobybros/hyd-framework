@@ -8,12 +8,12 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 console.log("[[[HYD framework based on VUE]]]");
-var HYD = (function() {
+var HYD = (function () {
   // 	var uiViewManager = new UIViewManager();
   var eventManager = new EventManager();
   var featureMap = new HashMap();
 
-  window.addEventListener("load", function(event) {
+  window.addEventListener("load", function (event) {
     if (event.currentTarget == window) {
       eventManager.sendEvent("ready");
     }
@@ -26,7 +26,7 @@ var HYD = (function() {
     deploy: "file",//WebDeployment
     eventManager: eventManager,
 
-    nsf: function(namespaceFile) {
+    nsf: function (namespaceFile) {
       var name = namespaceFile;
       var pos = namespaceFile.lastIndexOf('.');
       if (pos != -1) {
@@ -35,7 +35,7 @@ var HYD = (function() {
       }
       return name;
     },
-    ns: function(namespaceStr) {
+    ns: function (namespaceStr) {
       var namespaceList = namespaceStr.split('.'),
         itemTemp = window,
         i,
@@ -49,7 +49,7 @@ var HYD = (function() {
      * 写入CSS代码.
      * @param cssText {String} CSS代码.
      */
-    writeCSSText: function(cssText) {
+    writeCSSText: function (cssText) {
       // 			if(Object.prototype.toString.call(cssText) == "[object Array]"){
       // 				cssText = cssText.join('\r\n');
       // 			}
@@ -62,14 +62,14 @@ var HYD = (function() {
     /**
      * 修改传递方法的调用作用域
      */
-    call: function(scope, callback) {
-      var cb = function() {
+    call: function (scope, callback) {
+      var cb = function () {
         callback.apply(scope, arguments);
       }
       return cb;
     },
 
-    extend: function(target, obj) {
+    extend: function (target, obj) {
       if (typeof obj == 'undefined') {
         obj = target;
         target = this;
@@ -86,7 +86,7 @@ var HYD = (function() {
     /**
      * 生成唯一ID.
      */
-    generateId: function() {
+    generateId: function () {
       // desired length of Id
       var idStrLen = 32;
       // always start with a letter -- base 36 makes for a nice shortcut
@@ -101,12 +101,12 @@ var HYD = (function() {
       return (idStr);
     },
 
-    use: function(external, options) {
+    use: function (external, options) {
       Vue && Vue.use && Vue.use(external, options);
     },
 
-    registerGlobalPerm: function(key, obj) {
-      Vue.use(function(v) {
+    registerGlobalPerm: function (key, obj) {
+      Vue.use(function (v) {
         v.mixin({
           beforeCreate() {
             this.public = {}
@@ -120,7 +120,7 @@ var HYD = (function() {
       })
     },
 
-    stringToFunction: function(str) {
+    stringToFunction: function (str) {
       var arr = str.split(".");
 
       var fn = (window || this);
@@ -136,29 +136,29 @@ var HYD = (function() {
     },
     /**
      var tennysonQuote = lines(function() {/*!
-		  Theirs not to make reply,
-		  Theirs not to reason why,
-		  Theirs but to do and die
+      Theirs not to make reply,
+      Theirs not to reason why,
+      Theirs but to do and die
      *\/})
      */
-    lines: function(f) {
+    lines: function (f) {
       return f.toString().replace(/^[^\/]+\/\*!?/, '').replace(/\*\/[^\/]+$/, '');
     },
-    registerEvent: function(key, types, observer) {
-      if(!key)
+    registerEvent: function (key, types, observer) {
+      if (!key)
         throw "key can not be null while register event"
       var theTypes = undefined
-      if(hyd.isString(types))
+      if (hyd.isString(types))
         theTypes = [types]
-      else if(hyd.isArray(types))
+      else if (hyd.isArray(types))
         theTypes = types
       else
         throw new Error("Illegal types while register Event, " + types)
       if (!this.eventObserverMap) {
         this.eventObserverMap = {}
       }
-      if(hyd.isObject(key)) {
-        if(!key._registerHydEventKey) {
+      if (hyd.isObject(key)) {
+        if (!key._registerHydEventKey) {
           const generateId = this.generateId()
           key._registerHydEventKey = generateId
         }
@@ -169,16 +169,16 @@ var HYD = (function() {
         list = new ArrayList()
         this.eventObserverMap[key] = list
       }
-      for(var i = 0; i < theTypes.length; i++) {
-        list.add({observer: observer, type: theTypes[i]})
+      for (var i = 0; i < theTypes.length; i++) {
+        list.add({ observer: observer, type: theTypes[i] })
         hyd.eventManager.registerEvent(theTypes[i], observer)
       }
 
     },
-    unregisterEvent: function(key) {
-      if(!key)
+    unregisterEvent: function (key) {
+      if (!key)
         throw "key can not be null while unregisterEvent"
-      if(hyd.isObject(key)) {
+      if (hyd.isObject(key)) {
         key = key._registerHydEventKey
       }
       if (this.eventObserverMap) {
@@ -191,10 +191,10 @@ var HYD = (function() {
         }
       }
     },
-    sendEvent: function(type, obj) {
+    sendEvent: function (type, obj) {
       hyd.eventManager.sendEvent(type, obj);
     },
-    initFeatures: function() {
+    initFeatures: function () {
       var z, i, elmnt;
 
       z = document.querySelectorAll('div[hyd="feature"]');
@@ -203,7 +203,7 @@ var HYD = (function() {
         this.initFeature(elmnt);
       }
     },
-    initFeature: function(elmnt, obj) {
+    initFeature: function (elmnt, obj) {
       var featureObj = obj
       var file, loaded, xhttp, id, jsFile;
       /*search for elements with a certain atrribute:*/
@@ -215,21 +215,21 @@ var HYD = (function() {
       var featureJson = this.features[jsFile];
       if (!featureJson) {
         var featureJs = elmnt.getAttribute("js")
-        if(featureJs) {
+        if (featureJs) {
           var result = document.querySelectorAll('script[src="' + featureJs + '"]');
-          if(result.length === 0) {
+          if (result.length === 0) {
             var oHead = document.getElementsByTagName('HEAD').item(0);
-            var oScript= document.createElement("script");
+            var oScript = document.createElement("script");
             oScript.type = "text/javascript";
             oScript.src = featureJs;
-            oScript.onload = function(event){
+            oScript.onload = function (event) {
               event.currentTarget.setAttribute("loaded", "true");
               console.log("async js loaded " + event.currentTarget.src);
               hyd.initFeature(elmnt, obj)
               // var script = document.querySelector('script[src="' + featureJs + '"]');
               // hyd.eventManager.sendEvent("IMPORT_" + realPath, {type : "script", element : script});
             }.bind(this);
-            oScript.onerror = function(event){
+            oScript.onerror = function (event) {
               console.error("Async load featureJs ", featureJs, " event ", event)
             }.bind(this);
             oHead.appendChild(oScript);
@@ -282,11 +282,11 @@ var HYD = (function() {
           elmnt.setAttribute("id", id);
         }
 
-        var createFeature = function(feature, target, featureParams) {
-          var sendEvent = function(type, obj) {
+        var createFeature = function (feature, target, featureParams) {
+          var sendEvent = function (type, obj) {
             hyd.eventManager.sendEvent(type, obj);
           }
-          var register = function(type, obj) {
+          var register = function (type, obj) {
             if (!feature._messageCallbacks) {
               feature._messageCallbacks = new HashMap();
             }
@@ -303,13 +303,13 @@ var HYD = (function() {
             hyd.eventManager.registerEvent(type, obj);
             feature._messageCallbacks.put(obj.key, type);
           }
-          var unregister = function(type, obj) {
+          var unregister = function (type, obj) {
             hyd.eventManager.unregisterEvent(type, obj);
             if (feature._messageCallbacks) {
               feature._messageCallbacks.remove(obj.key);
             }
           }
-          var unregisterAll = function() {
+          var unregisterAll = function () {
             if (feature._messageCallbacks) {
               var keys = feature._messageCallbacks.keys();
               for (var i = 0; i < keys.length; i++) {
@@ -395,13 +395,13 @@ var HYD = (function() {
         createFeature(new featureConstructor(), container.id, elmnt.featureParams);
       }
     },
-    destroyFeature: function(element, noRemoval) {
+    destroyFeature: function (element, noRemoval) {
       var featureId = element.getAttribute("fid");
       if (hyd.isString(featureId)) {
         var feature = featureMap.get(featureId);
         if (hyd.isObject(feature)) {
           feature.onDestroyed();
-          if(feature.view && this.isFunction(feature.view.$destroy)) {
+          if (feature.view && this.isFunction(feature.view.$destroy)) {
             feature.view.$destroy();
           }
           console.log(feature.name + " onDestroyed");
@@ -411,7 +411,7 @@ var HYD = (function() {
         }
       }
     },
-    reloadFeature: function(element, fob) {
+    reloadFeature: function (element, fob) {
       var featureId = element.getAttribute("fid");
       if (hyd.isString(featureId)) {
         var feature = featureMap.get(featureId);
@@ -422,7 +422,7 @@ var HYD = (function() {
         }
         element.removeAttribute('fid');
         element.removeAttribute('loaded');
-        element.childNodes.forEach(function(item, index) {
+        element.childNodes.forEach(function (item, index) {
           element.removeChild(item);
         })
         hyd.initFeature(element, fob);
@@ -432,43 +432,43 @@ var HYD = (function() {
      Support both
      hyd.ns("test");
      test.AFeature = hyd.featureV((function(){
-			var staticVar = "hello";
-			function x() {
+      var staticVar = "hello";
+      function x() {
 
-			}
+      }
 
-			x.prototype.onAppend = function(html, inDom) {
+      x.prototype.onAppend = function(html, inDom) {
 
-			}
+      }
 
-			x.prototype.onRemove = function(html) {
+      x.prototype.onRemove = function(html) {
 
-			}
+      }
 
-			x.prototype.toInnerHtml = function() {
+      x.prototype.toInnerHtml = function() {
 
-			}
+      }
 
-			return x;
-		})());
+      return x;
+    })());
 
      and
 
      hyd.ns("test");
      test.AFeatureEx = hyd.featureV({
-			onCreated() {
+      onCreated() {
 
-			},
-			onDestroyed() {
+      },
+      onDestroyed() {
 
-			},
-			data : "hello"
-		});
+      },
+      data : "hello"
+    });
      */
-    component: function(name, component) {
+    component: function (name, component) {
       Vue.component(name, component);
     },
-    asyncFeature: function(name, asyncImport) {
+    asyncFeature: function (name, asyncImport) {
       if (name == undefined || asyncImport == undefined)
         return;
       if (!this.features) {
@@ -485,7 +485,7 @@ var HYD = (function() {
         };
       }
     },
-    feature: function(name, featureConstructor) {
+    feature: function (name, featureConstructor) {
       if (name == undefined || featureConstructor == undefined)
         return;
       if (!this.features) {
@@ -496,7 +496,7 @@ var HYD = (function() {
       };
     },
 
-    asyncCalls: function(actionJsons, callback) {
+    asyncCalls: function (actionJsons, callback) {
       let calls = undefined;
       if (this.isObject(actionJsons)) {
         calls = [actionJsons];
@@ -511,17 +511,17 @@ var HYD = (function() {
       for (var i = 0; i < calls.length; i++) {
         confirmArray.push(i);
       }
-      var successCallback = function(callbackData) {
+      var successCallback = function (callbackData) {
         this.actionJson.callbackData = callbackData;
         this.successObjs.push(this.actionJson);
         this.confirmCallback(this.actionIndex);
       }
-      var failedCallback = function(callbackData) {
+      var failedCallback = function (callbackData) {
         this.actionJson.callbackData = callbackData;
         this.failedObjs.push(this.actionJson);
         this.confirmCallback(this.actionIndex);
       }
-      var confirmCallback = function(index) {
+      var confirmCallback = function (index) {
         for (var i = 0; i < this.confirmArray.length; i++) {
           if (this.confirmArray[i] == index) {
             this.confirmArray.splice(i, 1);
@@ -539,7 +539,7 @@ var HYD = (function() {
           if (this.isFunction(calls[i].run)) {
             var obj = undefined;
             try {
-              var Constructor = function() {
+              var Constructor = function () {
               };
               this.extend(Constructor.prototype, calls[i]);
               Constructor.prototype.success = successCallback;
@@ -568,38 +568,154 @@ var HYD = (function() {
     },
 
 
-    isObject: function(obj) {
+    isObject: function (obj) {
       return Object.prototype.toString.call(obj) === '[object Object]';
     },
 
-    isInt: function(x) {
+    setRemoteFunction: function (type, callback) {
+      if (typeof type !== 'string') {
+        return
+      }
+
+      if (!this._remoteFunctionObserverMap) {
+        this._remoteFunctionObserverMap = {}
+      }
+
+      if (this._remoteFunctionObserverMap[type]) {
+        hyd.unregisterEvent(this._remoteFunctionObserverMap[type].id)
+        delete this._remoteFunctionObserverMap[type]
+      }
+
+      if (typeof callback === 'function') {
+        this._remoteFunctionObserverMap[type] = {
+          requestEvent: type + 'Request',
+          responseEvent: type + 'Response',
+          id: this.generateId(),
+          callback,
+        }
+
+
+        // register requestEvent
+        hyd.registerEvent(this._remoteFunctionObserverMap[type].id, this._remoteFunctionObserverMap[type].requestEvent, {
+          scope: this,
+          callback(event, { remoteId, data }) {
+            const remoteFunction = event.split('Request')[0]
+            if (remoteFunction && this._remoteFunctionObserverMap[remoteFunction]) {
+              let remoteObj = this._remoteFunctionObserverMap[remoteFunction]
+              remoteObj.callback(data, result => {
+                hyd.sendEvent(this._remoteFunctionObserverMap[type].responseEvent, { remoteId, result })
+              })
+            }
+          }
+        })
+      }
+    },
+
+    removeRemoteFunction: function (type) {
+      if (this._remoteFunctionObserverMap && this._remoteFunctionObserverMap[type]) {
+        hyd.unregisterEvent(this._remoteFunctionObserverMap[type].id)
+        delete this._remoteFunctionObserverMap[type]
+      }
+    },
+
+    callRemoteFunction: function (type, obj, timeout = 10 * 6000) {
+      if (typeof type === 'string') {
+        return new Promise((resolve, reject) => {
+
+          if (!this._remoteFunctionPromiseMap) {
+            this._remoteFunctionPromiseMap = {}
+          }
+          if (!this._remoteFunctionPromiseMap[type]) {
+            this._remoteFunctionPromiseMap[type] = {}
+          }
+
+          let remoteId = this.generateId()
+          // 可能存在泄露
+          let targetObj = {
+            callback: function() {
+              try {
+                let remoteFunctionObj = this.scope._remoteFunctionPromiseMap[this.type][this.remoteId]
+                if (remoteFunctionObj) {
+                  remoteFunctionObj.promise.reject(-1)
+                  delete this.scope._remoteFunctionPromiseMap[this.type][this.remoteId]
+                  if(Object.keys(this.scope._remoteFunctionPromiseMap[this.type]).length === 0) {
+                    hyd.unregisterEvent(this.type + 'Response')
+                  }
+                }
+              } catch (error) {
+                
+              }
+            }, 
+            type, 
+            remoteId, 
+            lastTimeout: Date.now() + timeout,
+            promise: { resolve, reject },
+            scope: this,
+          }
+          targetObj.timeout = setTimeout(targetObj.callback.bind(targetObj), timeout)
+          this._remoteFunctionPromiseMap[type][remoteId] = targetObj
+          // register responseEvent
+          if (Object.keys(this._remoteFunctionPromiseMap[type]).length === 1) {
+            hyd.registerEvent(type + 'Response', type + 'Response', {
+              scope: this,
+              callback(event, { remoteId, result }) {
+                const remoteFunction = event.split('Response')[0]
+                if (this._remoteFunctionPromiseMap[remoteFunction]) {
+                  let remoteObj = this._remoteFunctionPromiseMap[remoteFunction][remoteId]
+                  if (remoteObj.promise) {
+                    if (remoteObj.lastTimeout && remoteObj.lastTimeout >= Date.now()) {
+                      clearTimeout(remoteObj.timeout)
+                      remoteObj.promise.resolve(result)
+                      remoteObj.promise = null
+                      remoteObj.lastTimeout = undefined
+                      remoteObj = null
+                      delete this._remoteFunctionPromiseMap[remoteFunction][remoteId]
+                    }
+                  }
+                }
+                if (Object.keys(this._remoteFunctionPromiseMap[remoteFunction]).length === 0) {
+                  hyd.unregisterEvent(event)
+                }
+              }
+            })
+          }
+
+          hyd.sendEvent(type + 'Request', {
+            remoteId,
+            data: obj
+          })
+        })
+      }
+    },
+
+    isInt: function (x) {
       return x % 1 === 0;
     },
 
-    isFunction: function(functionToCheck) {
+    isFunction: function (functionToCheck) {
       var getType = {};
       return functionToCheck && (getType.toString.call(functionToCheck) == '[object Function]' || getType.toString.call(functionToCheck) == '[object AsyncFunction]');
     },
 
-    isArray: function(obj) {
+    isArray: function (obj) {
       return Object.prototype.toString.call(obj) === '[object Array]';
     },
 
-    isString: function(obj) {
+    isString: function (obj) {
       return Object.prototype.toString.call(obj) === '[object String]';
     },
-    replaceString: function(value, params) {
+    replaceString: function (value, params) {
       if (!hyd.isString(value)) {
         return "";
       }
 
       var replacedStr = value
-      if(params == undefined || params == null)
+      if (params == undefined || params == null)
         return replacedStr
-      if(!hyd.isArray(params)) {
+      if (!hyd.isArray(params)) {
         params = [params]
       }
-      params.forEach(function(value, index) {
+      params.forEach(function (value, index) {
         var reg = "\{" + index + "\}"
         replacedStr = replacedStr.replace(reg, value);
       })

@@ -4,8 +4,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2020-11-04 10:43:24
- * @LastEditTime: 2020-11-04 16:15:39
- * @FilePath: \hyd-framework\src\hydElectron\index.js
+ * @LastEditTime: 2020-11-16 11:02:27
+ * @FilePath: \tc-class-client-electronjs\node_modules\hydElectron\index.js
  */
 
 /* 
@@ -87,13 +87,13 @@ if (features && features.length) {
     const name = path.basename(absolutePath, '.feature.js')
     const plugin = new HtmlWebpackPlugin({
       template,
-      filename: name + '.feature.html',
+      filename: featureDefine.filename || (name + '.feature.html'),
       chunks: ['hyd', 'hyd-electron', name + '.feature']
     })
     plugins.push(plugin)
     entry[name + '.feature'] = absolutePath
     console.log('chunk: ', name + '.feature')
-    console.log(name + '.feature.html')
+    console.log(featureDefine.filename || (name + '.feature.html'))
   }
 }
 if (services && services.length) {

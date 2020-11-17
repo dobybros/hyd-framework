@@ -63,7 +63,8 @@ class HydElectronRenderer {
       try {
         let copyData = data;
         if (typeof data === 'object') {
-          copyData = JSON.parse(JSON.stringify(data))
+          copyData = Object.assign({}, copyData)
+          copyData = JSON.parse(JSON.stringify(copyData))
         }
         ipcRenderer.send('hydEvent.cast', {
           event, id,
@@ -138,7 +139,7 @@ class HydElectronRenderer {
   _registerCommunication() {
     ipcRenderer.on('hydEvent.initHydRoot', (e, { name, type }) => {
       const hydFeature = document.createElement('div')
-      hydFeature.setAttribute('hyd', type)
+      hydFeature.setAttribute('hyd', type || 'feature')
       hydFeature.setAttribute('name', name)
       document.body.appendChild(hydFeature)
       hyd.initFeatures()
