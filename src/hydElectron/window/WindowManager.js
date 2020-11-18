@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2020-11-10 10:51:08
- * @LastEditTime: 2020-11-10 11:46:03
+ * @LastEditTime: 2020-11-18 15:35:35
  * @FilePath: \hyd-framework\src\hydElectron\window\WindowManager.js
  */
 const { ipcMain } = require('electron')
@@ -72,7 +72,7 @@ class WindowManager {
   closeWindow(_, id, close, reason) {
     const targetWindow = this.getWinById(id)
     if (targetWindow) {
-      targetWindow.closeWindow(close, reason)
+      targetWindow.windowClose(close, reason)
     }
   }
   setWindow(_, id, obj) {

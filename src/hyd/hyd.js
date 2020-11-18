@@ -194,6 +194,10 @@ var HYD = (function () {
     sendEvent: function (type, obj) {
       hyd.eventManager.sendEvent(type, obj);
     },
+    sendInternalEvent: function(type, object) {
+      const eventDontNeedToBeBoardCast = true
+      this.sendEvent(type, object, eventDontNeedToBeBoardCast)
+    },
     initFeatures: function () {
       var z, i, elmnt;
 

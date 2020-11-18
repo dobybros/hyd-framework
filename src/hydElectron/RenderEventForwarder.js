@@ -83,7 +83,7 @@ class RenderEventForwarder {
         const errorItems = []
         contents.forEach((content, index) => {
           try {
-            content.send('hydEvent.forward', {event, data: Object.assign({}, {from: 'asd'}, data)})
+            content.send('hydEvent.forward', {event, data})
           } catch (e) {
             errorItems.unshift(index)
           }

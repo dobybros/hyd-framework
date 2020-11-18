@@ -48,7 +48,7 @@ class HydElectronRenderer {
     hyd.ipcSendSync = this._sendSync.bind(this)
   }
 
-  _sendEvent(event, data, timeout = 0) {
+  _sendEvent(event, data, eventDontNeedToBeBoardCast, timeout = 0) {
     return new Promise((resolve, reject) => {
       let id
       if (timeout) {
@@ -59,6 +59,10 @@ class HydElectronRenderer {
         }
       }
       this._originSender(event, data)
+
+      if (eventDontNeedToBeBoardCast) {
+        resolve()
+      }
 
       try {
         let copyData = data;
@@ -86,6 +90,12 @@ class HydElectronRenderer {
 
   _registerEvent(key, event, observer) {
     const that = this
+    let protoEvent;
+    if (Object.prototype.toString.call(event) === '[object Array]') {
+      // 添加对于array形式的event的注册支持
+      protoEvent = JSON.parse(JSON.stringify(event))
+      event = protoEvent.shift()
+    }
     this._originRegisterer(key, event, {
       callback: function (type, obj) {
         const doneCallback = (result) => {
@@ -130,9 +140,15 @@ class HydElectronRenderer {
       delete this._preHandleEvents[event];
     }
     try {
+      if (typeof event === 'array') {
+        debugger
+      }
       ipcRenderer.send('hydEvent.register', event)
     } catch (error) {
       console.warn('Exception while register event:', error)
+    }
+    if (protoEvent && protoEvent.length) {
+      this._registerEvent(key, protoEvent, observer)
     }
   }
 
