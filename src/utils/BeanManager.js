@@ -39,7 +39,7 @@ export default class BeanManager {
     }
     this.beanMap[name] = bean
     if (hyd.isFunction(bean.onShareData)) {
-      this._watchDataMap[bean.]
+      // this._watchDataMap[bean.]
     }
     return bean
   }
