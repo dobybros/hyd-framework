@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-19 18:27:40
- * @LastEditTime: 2020-11-16 11:05:03
+ * @LastEditTime: 2020-11-20 10:42:44
  * @FilePath: \hyd-framework\src\hydElectron\HydElectron.js
  */
 
@@ -61,6 +61,39 @@ class HydElectron {
       }
       this._features[featureName] = window
     }
+  }
+
+  setMainWindow(window) {
+    Object.keys(this._features).forEach(feature => {
+      this._features[feature].setMainWindow(window)
+    })
+    Object.keys(this._services).forEach(service => {
+      this._services[service].setMainWindow(window)
+    })
+  }
+
+  getWindowProcessIds() {
+    let featureIds = []
+    Object.keys(this._features).forEach(feature => {
+      let featureManager = this._features[feature]
+      let id = featureManager.getWindowProcessId()
+      if (id !== undefined) {
+        featureIds.push(id)
+      }
+    })
+    return featureIds
+  }
+
+  initAllWindows() {
+    Object.keys(this._features).forEach(feature => {
+      this._features[feature].initWindow()
+    })
+  }
+
+  shutdownAllWindows() {
+    Object.keys(this._features).forEach(feature => {
+      this._features[feature].windowClose(true)
+    })
   }
 
   launch() {

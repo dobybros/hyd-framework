@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-10 11:46:26
+ * @LastEditTime: 2020-11-19 15:08:49
  * @FilePath: \hyd-framework\src\hydElectron\window\FeatureWindow.js
  */
 const { BrowserWindow, screen } = require('electron')
@@ -66,6 +66,10 @@ class FeatureWindow extends HydWindow {
           default:
             break;
         }
+      }
+
+      if (this._mainWindow) {
+        // renderWindowConfig.parent = this._mainWindow
       }
       const window = new BrowserWindow(renderWindowConfig)
       this._electronWindow = window

@@ -2,14 +2,16 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-12 15:20:28
+ * @LastEditTime: 2020-11-20 10:37:37
  * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
 const RenderEventForwarder = require('../RenderEventForwarder')
 const { ipcMain } = require('electron')
 const path = require('path')
-const {uuid} = require('../utils/UUID.js')
+const { uuid } = require('../utils/UUID.js')
+
+const os = require('os')
 
 const windowManager = require('./WindowManager.js')
 
@@ -37,7 +39,7 @@ class HydWindow {
     let window = this._electronWindow
     if (this.debug) {
       window.openDevTools()
-      const {host, port} = this.finallyDevStatus
+      const { host, port } = this.finallyDevStatus
       const protocol = this.finallyDevStatus.https ? 'https' : 'http'
       // const featureUrl = hydBaseUrl + `/${name}.html`
       const url = `${protocol}://${host}:${port}/${name}.html`
@@ -67,12 +69,32 @@ class HydWindow {
     this._preHandleEvents[eventName].push(data)
     if (!this._electronWindow) {
       this.generate(data, () => {
-          (typeof done === 'function') && done()
+        (typeof done === 'function') && done()
       })
       this._electronWindow.on('close', event => {
         event.preventDefault();
         this._sendCloseWindow()
       })
+    }
+  }
+
+  setMainWindow(window) {
+    this._mainWindow = window
+  }
+
+  getWindowProcessId() {
+    if (this._electronWindow) {
+      if (process.platform === 'darwin') {
+        return this._electronWindow.getTitle()
+      }
+      let hbuf = win.getNativeWindowHandle()
+      if (os.endianness() == "LE") {
+        return hbuf.readInt32LE()
+      } else {
+        return hbuf.readInt32BE()
+      }
+    } else {
+      return undefined
     }
   }
 

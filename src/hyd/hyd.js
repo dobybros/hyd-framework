@@ -3,7 +3,9 @@ import { ArrayList } from "../utils/ArrayList";
 import { HashMap } from "../utils/HashMap";
 import { EventManager } from "../events/EventManager";
 import SortedMap from "../utils/SortedMap";
+import BeanManager from "../utils/BeanManager.js"
 import VueRouter from 'vue-router'
+
 
 Vue.use(VueRouter)
 
@@ -759,6 +761,7 @@ hyd.EventManager = EventManager
 hyd.ArrayList = ArrayList
 hyd.SortedMap = SortedMap
 hyd.HashMap = HashMap
+hyd.beanManager = new BeanManager()
 export {
   hyd
 }
