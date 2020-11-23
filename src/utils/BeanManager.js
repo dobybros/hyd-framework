@@ -1,4 +1,8 @@
+import { hyd } from '../hyd/hyd'
+import { getEvents } from './HydEventsConstant'
+
 const onChange = require('on-change')
+
 export default class BeanManager {
   constructor() {
     this.beanMap = {}
@@ -6,10 +10,37 @@ export default class BeanManager {
     this.beanFilterMap = {}
 
     this._watchDataMap = {}
+
+    this._initDataMap = {}
+
+    this._beanManagerNumber = hyd.generateId()
+
+    this.events = getEvents(this)
+
+    this.registerEvents()
+
+    this.registerRemoteCallbacks()
+  }
+
+  registerEvents() {
+  }
+
+  registerRemoteCallbacks() {
+    this.bindGetRemoteData = this.getRemoteData.bind(this)
   }
 
   setBeanConstructorFilter(bean, filterFunc) {
     this.beanFilterMap[bean.name] = filterFunc
+  }
+
+  getRemoteData({ beanName }, callback) {
+    let remoteData = undefined
+    if (this.beanMap[beanName]) {
+      if (this._initDataMap[beanName]) {
+        remoteData = this._initDataMap[beanName]
+      }
+    }
+    callback(remoteData || {})
   }
 
   /**
@@ -19,7 +50,7 @@ export default class BeanManager {
    * @param constructor
    * @returns {Bean} return new bean
    */
-  createBean(constructor, name) {
+  async createBean(constructor, name) {
     if(!hyd.isFunction(constructor)) throw "constructor is not constructor, " + constructor
     if(!name) {
       name = constructor.name
@@ -30,17 +61,45 @@ export default class BeanManager {
     if (typeof this.beanFilterMap[constructor.name] === 'function') {
       const result = this.beanFilterMap[constructor.name]()
       if (typeof result === 'function') {
-        bean = new result()
-      } else {
-        bean = new constructor()
+        constructor = result
       }
-    } else {
-      bean = new constructor()
+    }
+    // electron端就先去查一下有没有注册好了的
+    let extendInitData = {};
+    if (window.electronRenderer) {
+      try {
+        const findOutResult = await electronRenderer.getBeanFromMainProcess(name)
+        if (typeof findOutResult === 'object') {
+          extendInitData = findOutResult
+        }
+      } catch (error) {
+        
+      }
+    }
+
+
+    bean = new constructor()
+    if (extendInitData) {
+      bean.
     }
     this.beanMap[name] = bean
-    if (hyd.isFunction(bean.onShareData)) {
-      // this._watchDataMap[bean.]
+    // if (hyd.isFunction(bean.onShareData)) {
+    //   // sync shared data
+    //   this._watchDataMap[name] = onChange(Object.assign({}, bean.onShareData(), { ___beanName: name, ___managerId: this._beanManagerNumber }), function(path, value, prevValue, name) {
+    //     const beanName = this.___beanName
+    //     const from = this.___managerId
+    //     hyd.sendEvent(this.events.SYNC_ONSHAREDATA, {
+    //       path, value, prevValue, name, beanName, from
+    //     })
+    //   })
+    // }
+
+    if (hyd.isFunction(bean.onInitData)) {
+      // sync init data
+      hyd.extend(bean.onInitData(), extendInitData)
     }
+
+    this.setBeanCreateToMainProcess(name, this._beanManagerNumber)
     return bean
   }
 
