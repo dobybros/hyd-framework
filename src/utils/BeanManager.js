@@ -65,10 +65,10 @@ export default class BeanManager {
       }
     }
     // electron端就先去查一下有没有注册好了的
-    let extendInitData = {};
+    let extendInitData = false;
     if (window.electronRenderer) {
       try {
-        const findOutResult = await electronRenderer.getBeanFromMainProcess(name)
+        const findOutResult = await hydElectronRenderer.getBeanFromMainProcess(name)
         if (typeof findOutResult === 'object') {
           extendInitData = findOutResult
         }
@@ -76,12 +76,9 @@ export default class BeanManager {
         
       }
     }
-
-
+    
+    
     bean = new constructor()
-    if (extendInitData) {
-      bean.
-    }
     this.beanMap[name] = bean
     // if (hyd.isFunction(bean.onShareData)) {
     //   // sync shared data
@@ -96,10 +93,13 @@ export default class BeanManager {
 
     if (hyd.isFunction(bean.onInitData)) {
       // sync init data
-      hyd.extend(bean.onInitData(), extendInitData)
+      if (typeof extendInitData !== 'boolean') {
+        hyd.extend(bean.onInitData(), extendInitData || {})
+      }
     }
-
-    this.setBeanCreateToMainProcess(name, this._beanManagerNumber)
+    if (extendInitData === undefined) {
+      hydElectronRenderer.setBeanCreateToMainProcess(name, this._beanManagerNumber)
+    }
     return bean
   }
 
@@ -118,6 +118,12 @@ export default class BeanManager {
     let old = this.beanMap[name]
     this.beanMap[name] = object
     return old
+  }
+
+  initRemoteBeanList(list) {
+    return Promise.all(list.forEach(bean => {
+      return this.createBean(bean)
+    }))
   }
 
   /**

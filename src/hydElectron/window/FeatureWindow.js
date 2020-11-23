@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-19 15:08:49
+ * @LastEditTime: 2020-11-23 15:36:38
  * @FilePath: \hyd-framework\src\hydElectron\window\FeatureWindow.js
  */
 const { BrowserWindow, screen } = require('electron')
@@ -78,7 +78,7 @@ class FeatureWindow extends HydWindow {
       this._electronWindow.once('ready-to-show', () => {
         if (this._preHandleEvents) {
           const sendPreHandleEvents = JSON.parse(JSON.stringify(this._preHandleEvents))
-          this._electronWindow.webContents.executeJavaScript("window.launch(" + JSON.stringify(sendPreHandleEvents) + ", '" + this.windowId + "')")
+          this._electronWindow.webContents.executeJavaScript("window.launch(" + JSON.stringify(sendPreHandleEvents) + ", '" + this.windowId + ", '" + JSON.stringify(this._featureDefine.remoteBeanList || []) + "')")
           this._preHandleEvents = {}
         }
         if ((typeof done).indexOf('function') !== -1) {

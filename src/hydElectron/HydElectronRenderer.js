@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const { hyd } = require('../hyd/hyd')
 const remote = require('electron').remote
 
 class HydElectronRenderer {
@@ -223,11 +224,18 @@ class HydElectronRenderer {
     // })
   }
 
-  launch(preHandleEvents, windowId) {
+  async launch(preHandleEvents, windowId, remoteBeanList) {
     if (preHandleEvents) {
       this._preHandleEvents = preHandleEvents
     }
     this.windowId = windowId
+    if (remoteBeanList && remoteBeanList.length) {
+      try {
+        await hyd.initRemoteBeanList(remoteBeanList)
+      } catch (error) {
+        
+      }
+    }
     ipcRenderer.send('hydEvent.hydReady')
   }
 }

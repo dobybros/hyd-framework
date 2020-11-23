@@ -693,6 +693,16 @@ var HYD = (function () {
         })
       }
     },
+    initRemoteBeanList: async function(list) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await hyd.beanManager.initRemoteBeanList(list)
+          
+        } catch (error) { 
+        }
+        resolve()
+      })
+    },
 
     isInt: function (x) {
       return x % 1 === 0;
