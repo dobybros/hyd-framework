@@ -2,8 +2,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-20 10:37:37
- * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
+ * @LastEditTime: 2020-11-24 16:23:18
+ * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
 const RenderEventForwarder = require('../RenderEventForwarder')
@@ -71,10 +71,17 @@ class HydWindow {
       this.generate(data, () => {
         (typeof done === 'function') && done()
       })
-      this._electronWindow.on('close', event => {
-        event.preventDefault();
-        this._sendCloseWindow()
-      })
+    } else {
+      if (!this.isDestroyed()) {
+        if (this.isHide) {
+          this.show()
+        } else {
+          // same event hide window
+          this.windowHide()
+        }
+      } else {
+        
+      }
     }
   }
 
@@ -87,7 +94,7 @@ class HydWindow {
       if (process.platform === 'darwin') {
         return this._electronWindow.getTitle()
       }
-      let hbuf = win.getNativeWindowHandle()
+      let hbuf = this._electronWindow.getNativeWindowHandle()
       if (os.endianness() == "LE") {
         return hbuf.readInt32LE()
       } else {
@@ -114,6 +121,12 @@ class HydWindow {
     this.__exitPromiseObj = null
   }
 
+  windowHide() {
+    if (!this.isDestroyed()) {
+      this._electronWindow.hide()
+    }
+  }
+
   setWindow({ width, height, x, y }) {
     if (!this.isDestroyed()) {
       this._electronWindow.setSize(width, height, true)
@@ -132,7 +145,11 @@ class HydWindow {
   }
   destroy() {
     if (!this.isDestroyed()) {
-      this._electronWindow && this._electronWindow.destroy()
+      try {
+        this._electronWindow.destroy()
+      } catch (error) {
+        console.log(error)
+      }
     }
     this._electronWindow = null
   }

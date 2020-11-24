@@ -2,8 +2,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-19 15:08:49
- * @FilePath: \hyd-framework\src\hydElectron\window\FeatureWindow.js
+ * @LastEditTime: 2020-11-24 16:23:39
+ * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\FeatureWindow.js
  */
 const { BrowserWindow, screen } = require('electron')
 const HydWindow = require('./HydWindow')
@@ -41,8 +41,9 @@ class FeatureWindow extends HydWindow {
     }
   }
 
-  async generate(data, done) {
+  generate(data, done, showAfterCreate = true) {
     if (!this._electronWindow) {
+      this.isHide = true
       let renderWindowConfig = Object.assign({}, {
         webPreferences: {
           devTools: true,
@@ -72,9 +73,20 @@ class FeatureWindow extends HydWindow {
         // renderWindowConfig.parent = this._mainWindow
       }
       const window = new BrowserWindow(renderWindowConfig)
+      this.showAfterCreate = showAfterCreate
       this._electronWindow = window
 
       this._loadWindow(path.basename(this._featureDefine.feature.path, '.js'))
+      this._electronWindow.on('close', event => {
+        event.preventDefault();
+        this._sendCloseWindow()
+      })
+      this._electronWindow.on('show', event => {
+        this.isHide = false;
+      })
+      this._electronWindow.on('hide', event => {
+        this.isHide = true;
+      })
       this._electronWindow.once('ready-to-show', () => {
         if (this._preHandleEvents) {
           const sendPreHandleEvents = JSON.parse(JSON.stringify(this._preHandleEvents))
@@ -87,7 +99,9 @@ class FeatureWindow extends HydWindow {
           } else {
             done()
           }
-          this._electronWindow.show();
+          if (this.showAfterCreate) {
+            this._electronWindow.show();
+          }
         }
       })
     } else {

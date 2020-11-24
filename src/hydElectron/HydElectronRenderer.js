@@ -176,7 +176,8 @@ class HydElectronRenderer {
     ipcRenderer.on('hydEvent.windowWillClose', (e, message) => {
       this._originSender('windowWillClose', {
         type: 'hydElectronWindowClose',
-        close: this.closeWindow.bind(this)
+        close: this.closeWindow.bind(this),
+        hide: this.hideWindow.bind(this)
       })
     })
     console.log(window.preHandleEvents, Date.now())
@@ -190,6 +191,10 @@ class HydElectronRenderer {
 
   closeWindow(close = true, reason) {
     ipcRenderer.send('hydEvent.closeCurrentWindow', this.windowId, close, reason)
+  }
+
+  hideWindow() {
+    ipcRenderer.send('hydEvent.hideCurrentWindow', this.windowId)
   }
 
   shutdown() {
@@ -231,8 +236,11 @@ class HydElectronRenderer {
     ipcRenderer.send('hydEvent.hydReady')
   }
 }
-
-window.addEventListener('load', function () {
+if (window.hyd) {
   window.hydElectronRenderer = new HydElectronRenderer()
-})
+} else {
+  window.addEventListener('load', function () {
+    window.hydElectronRenderer = new HydElectronRenderer()
+  })
+}
 

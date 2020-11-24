@@ -2,8 +2,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2020-11-10 10:51:08
- * @LastEditTime: 2020-11-18 15:35:35
- * @FilePath: \hyd-framework\src\hydElectron\window\WindowManager.js
+ * @LastEditTime: 2020-11-24 13:58:26
+ * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\WindowManager.js
  */
 const { ipcMain } = require('electron')
 class WindowManager {
@@ -15,6 +15,7 @@ class WindowManager {
 
     this.bindCloseWindow = this.closeWindow.bind(this)
     this.bindSetWindow = this.setWindow.bind(this)
+    this.bindHideWindow = this.hideWindow.bind(this)
     this.registerWindowEvents()
   }
 
@@ -66,6 +67,7 @@ class WindowManager {
 
   registerWindowEvents() {
     ipcMain.on('hydEvent.closeCurrentWindow', this.bindCloseWindow)
+    ipcMain.on('hydEvent.hideCurrentWindow', this.bindHideWindow)
     ipcMain.on('hydEvent.setCurrentWindowStatus', this.bindSetWindow)
   }
 
@@ -73,6 +75,12 @@ class WindowManager {
     const targetWindow = this.getWinById(id)
     if (targetWindow) {
       targetWindow.windowClose(close, reason)
+    }
+  }
+  hideWindow(_, id ) {
+    const targetWindow = this.getWinById(id)
+    if (targetWindow) {
+      targetWindow.windowHide()
     }
   }
   setWindow(_, id, obj) {
