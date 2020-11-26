@@ -2,8 +2,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-24 16:23:18
- * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\HydWindow.js
+ * @LastEditTime: 2020-11-25 14:45:14
+ * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
 const RenderEventForwarder = require('../RenderEventForwarder')
@@ -152,6 +152,13 @@ class HydWindow {
       }
     }
     this._electronWindow = null
+  }
+
+  forceQuit() {
+    if (!this.isDestroyed()) {
+      this._forceQuit = true
+      this._electronWindow.close()
+    }
   }
   setBounds(options) {
     this._electronWindow.setBounds(options)

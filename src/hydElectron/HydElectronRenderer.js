@@ -208,6 +208,18 @@ class HydElectronRenderer {
     }
   }
 
+  focus() {
+    if (!this._currentWindow) {
+      this._currentWindow = remote.getCurrentWindow()
+    }
+    try {
+      this._currentWindow.show()
+    } catch (error) {
+      
+    }
+    this._currentWindow.focus()
+  }
+
   setWindowPassthrough(pass) {
     if (!this._currentWindow) {
       this._currentWindow = remote.getCurrentWindow()

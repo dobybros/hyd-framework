@@ -2,8 +2,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-19 18:27:40
- * @LastEditTime: 2020-11-23 18:03:08
- * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\HydElectron.js
+ * @LastEditTime: 2020-11-25 14:37:24
+ * @FilePath: \hyd-framework\src\hydElectron\HydElectron.js
  */
 
 const {app, ipcMain} = require('electron')
@@ -104,7 +104,7 @@ class HydElectron {
 
   destroyAllWindows() {
     Object.keys(this._features).forEach(feature => {
-      this._features[feature].destroy()
+      this._features[feature].forceQuit()
     })
   }
 

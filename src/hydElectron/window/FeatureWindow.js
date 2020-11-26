@@ -2,8 +2,8 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-24 16:23:39
- * @FilePath: \tc-class-client-electronjsd:\worklist\hyd-framework\src\hydElectron\window\FeatureWindow.js
+ * @LastEditTime: 2020-11-25 14:38:39
+ * @FilePath: \hyd-framework\src\hydElectron\window\FeatureWindow.js
  */
 const { BrowserWindow, screen } = require('electron')
 const HydWindow = require('./HydWindow')
@@ -78,8 +78,12 @@ class FeatureWindow extends HydWindow {
 
       this._loadWindow(path.basename(this._featureDefine.feature.path, '.js'))
       this._electronWindow.on('close', event => {
-        event.preventDefault();
-        this._sendCloseWindow()
+        if (this._forceQuit) {
+          this._forceQuit = undefined;
+        } else {
+          event.preventDefault();
+          this._sendCloseWindow()
+        }
       })
       this._electronWindow.on('show', event => {
         this.isHide = false;
