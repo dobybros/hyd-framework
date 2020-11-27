@@ -2,7 +2,7 @@
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
  * @Date: 2019-12-23 15:40:39
- * @LastEditTime: 2020-11-25 14:45:14
+ * @LastEditTime: 2020-11-27 12:25:48
  * @FilePath: \hyd-framework\src\hydElectron\window\HydWindow.js
  */
 const { devServer, output } = require('../config/default.config.js')
@@ -33,6 +33,12 @@ class HydWindow {
     this.windowId = uuid(10)
 
     windowManager.addWindow(this.windowType, this)
+    ipcMain.on('debugOpenDevTools', () => {
+      if (this._electronWindow && !this.isDestroyed()) {
+        this._electronWindow.webContents.openDevTools()
+      }
+      this.forceDebug = true
+    })
   }
 
   _loadWindow(name) {
@@ -51,6 +57,9 @@ class HydWindow {
       } catch (error) {
         console.error(error)
       }
+    }
+    if (this.forceDebug) {
+      window.openDevTools()
     }
 
     window.once('closed', () => {

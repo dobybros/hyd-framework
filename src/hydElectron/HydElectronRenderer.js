@@ -62,6 +62,7 @@ class HydElectronRenderer {
 
       if (eventDontNeedToBeBoardCast) {
         resolve()
+        return
       }
 
       try {
