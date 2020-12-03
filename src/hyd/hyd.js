@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue from 'vue/dist/vue.esm.js'
 import { ArrayList } from "../utils/ArrayList";
 import { HashMap } from "../utils/HashMap";
 import { EventManager } from "../events/EventManager";
@@ -604,7 +604,11 @@ var HYD = (function () {
         hyd.registerEvent(this._remoteFunctionObserverMap[type].id, this._remoteFunctionObserverMap[type].requestEvent, {
           scope: this,
           callback(event, { remoteId, data }) {
-            const remoteFunction = event.split('Request')[0]
+            // 防止remote的方法名里也有Request
+            let remoteFunction = event.split('Request')
+            remoteFunction.pop()
+            remoteFunction = remoteFunction.join('Request')
+
             if (remoteFunction && this._remoteFunctionObserverMap[remoteFunction]) {
               let remoteObj = this._remoteFunctionObserverMap[remoteFunction]
               remoteObj.callback(data, result => {
