@@ -208,6 +208,12 @@ class HydElectronRenderer {
       
     }
   }
+  setAlwaysOnTop(flag, level) {
+    if (!this._currentWindow) {
+      this._currentWindow = remote.getCurrentWindow()
+    }
+    this._currentWindow.setAlwaysOnTop(flag, level)
+  }
 
   focus() {
     if (!this._currentWindow) {
