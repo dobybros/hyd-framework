@@ -101,6 +101,10 @@ var HYD = (function() {
       return (idStr);
     },
 
+    use: function(external, options) {
+      Vue && Vue.use && Vue.use(external, options);
+    },
+
     registerGlobalPerm: function(key, obj) {
       Vue.use(function(v) {
         v.mixin({
@@ -153,8 +157,12 @@ var HYD = (function() {
       if (!this.eventObserverMap) {
         this.eventObserverMap = {}
       }
-      if(!hyd.isString(key) && key.constructor) {
-        key = key.constructor.name
+      if(hyd.isObject(key)) {
+        if(!key._registerHydEventKey) {
+          const generateId = this.generateId()
+          key._registerHydEventKey = generateId
+        }
+        key = key._registerHydEventKey
       }
       var list = this.eventObserverMap[key]
       if (!list) {
@@ -170,8 +178,8 @@ var HYD = (function() {
     unregisterEvent: function(key) {
       if(!key)
         throw "key can not be null while unregisterEvent"
-      if(!hyd.isString(key) && key.constructor) {
-        key = key.constructor.name
+      if(hyd.isObject(key)) {
+        key = key._registerHydEventKey
       }
       if (this.eventObserverMap) {
         var list = this.eventObserverMap[key]
@@ -189,7 +197,7 @@ var HYD = (function() {
     initFeatures: function() {
       var z, i, elmnt;
 
-      z = document.querySelectorAll('#hydFeature');
+      z = document.querySelectorAll('div[hyd="feature"]');
       for (i = 0; i < z.length; i++) {
         elmnt = z[i];
         this.initFeature(elmnt);
@@ -244,7 +252,7 @@ var HYD = (function() {
         //   }
         // }.bind(this));
         featureJson.asyncImport().then(data => {
-          this.initFeature(element);
+          this.initFeature(element, featureObj);
         }).catch(reason => {
           console.error("Async import " + jsFile + " failed, " + reason);
         });
@@ -370,7 +378,8 @@ var HYD = (function() {
         var container = document.createElement("div");
         container.id = elmnt.getAttribute("id");
         elmnt.setAttribute("fid", container.id);
-        elmnt.setAttribute("id", 'hydFeature');
+        // elmnt.setAttribute("id", 'hydFeature');
+        elmnt.removeAttribute("id");
         elmnt.appendChild(container);
         elmnt.setAttribute("loaded", "true");
         // 							element.parentNode.replaceChild(container, element);
@@ -569,7 +578,7 @@ var HYD = (function() {
 
     isFunction: function(functionToCheck) {
       var getType = {};
-      return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
+      return functionToCheck && (getType.toString.call(functionToCheck) == '[object Function]' || getType.toString.call(functionToCheck) == '[object AsyncFunction]');
     },
 
     isArray: function(obj) {
