@@ -19,13 +19,15 @@ var HYD = (function () {
       eventManager.sendEvent("ready");
     }
   }, false);
-
+  
   var HYD = {
     //html, pack js and css into independent file for one html
     //feature, pack js and css for each feature
     //file, don't pack anything, only use for development, no clear cache machanism
     deploy: "file",//WebDeployment
     eventManager: eventManager,
+    _viewPrototype: Vue,
+
 
     nsf: function (namespaceFile) {
       var name = namespaceFile;
@@ -103,11 +105,11 @@ var HYD = (function () {
     },
 
     use: function (external, options) {
-      Vue && Vue.use && Vue.use(external, options);
+      this._viewPrototype.use(external, options)
     },
 
     registerGlobalPerm: function (key, obj) {
-      Vue.use(function (v) {
+      this._viewPrototype.use(function (v) {
         v.mixin({
           beforeCreate() {
             this.public = {}
@@ -209,6 +211,7 @@ var HYD = (function () {
       }
     },
     initFeature: function (elmnt, obj) {
+      const scope = this
       var featureObj = obj
       var file, loaded, xhttp, id, jsFile;
       /*search for elements with a certain atrribute:*/
@@ -286,7 +289,6 @@ var HYD = (function () {
           id = hyd.generateId();
           elmnt.setAttribute("id", id);
         }
-
         var createFeature = function (feature, target, featureParams) {
           var sendEvent = function (type, obj) {
             hyd.eventManager.sendEvent(type, obj);
@@ -360,7 +362,7 @@ var HYD = (function () {
               feature.onCreated(featureParams, featureObj);
               console.log(feature.constructor.name + " onCreated");
               if (feature.view === undefined) {
-                feature.view = new Vue({
+                feature.view = new scope._viewPrototype({
                   data: theData,
                   template: theTemplate,
                   components: theComponents,
@@ -471,7 +473,7 @@ var HYD = (function () {
     });
      */
     component: function (name, component) {
-      Vue.component(name, component);
+      this._viewPrototype.component(name, component);
     },
     asyncFeature: function (name, asyncImport) {
       if (name == undefined || asyncImport == undefined)
@@ -756,6 +758,10 @@ var HYD = (function () {
       }
     }
   };
+
+  // HYD._viewPrototype.config.ignoredElements = [
+  //   "feature-view"
+  // ]
 
   return HYD;
 })();
