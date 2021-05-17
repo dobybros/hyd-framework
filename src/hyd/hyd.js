@@ -1,12 +1,9 @@
-import Vue from 'vue/dist/vue.esm.js'
+import Vue from 'vue'
 import { ArrayList } from "../utils/ArrayList";
 import { HashMap } from "../utils/HashMap";
 import { EventManager } from "../events/EventManager";
 import SortedMap from "../utils/SortedMap";
 import VueRouter from 'vue-router'
-
-
-Vue.use(VueRouter)
 
 console.log("[[[HYD framework based on VUE]]]");
 var HYD = (function () {
@@ -19,7 +16,7 @@ var HYD = (function () {
       eventManager.sendEvent("ready");
     }
   }, false);
-  
+
   var HYD = {
     //html, pack js and css into independent file for one html
     //feature, pack js and css for each feature
@@ -366,7 +363,7 @@ var HYD = (function () {
                   data: theData,
                   template: theTemplate,
                   components: theComponents,
-                  router
+                  router: new VueRouter(router)
                 });
                 // 								var view = new feature.view();
                 // 								feature.view.feature = feature;
@@ -654,11 +651,11 @@ var HYD = (function () {
                   }
                 }
               } catch (error) {
-                
+
               }
-            }, 
-            type, 
-            remoteId, 
+            },
+            type,
+            remoteId,
             lastTimeout: Date.now() + timeout,
             promise: { resolve, reject },
             scope: this,
@@ -770,6 +767,11 @@ hyd.EventManager = EventManager
 hyd.ArrayList = ArrayList
 hyd.SortedMap = SortedMap
 hyd.HashMap = HashMap
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+hyd.use(VueRouter)
 export {
   hyd
 }
