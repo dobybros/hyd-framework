@@ -86,6 +86,32 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11116,33 +11142,7 @@ Vue.compile = compileToFunctions;
 
 /* harmony default export */ __webpack_exports__["a"] = (Vue);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1), __webpack_require__(2).setImmediate))
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(0), __webpack_require__(2).setImmediate))
 
 /***/ }),
 /* 2 */
@@ -11212,7 +11212,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(0)))
 
 /***/ }),
 /* 3 */
@@ -11405,7 +11405,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1), __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(0), __webpack_require__(4)))
 
 /***/ }),
 /* 4 */
@@ -11602,13 +11602,12 @@ process.umask = function() { return 0; };
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
-// EXTERNAL MODULE: ./node_modules/vue/dist/vue.esm.js
-var vue_esm = __webpack_require__(0);
+// EXTERNAL MODULE: D:/worklist/hyd-framework/node_modules/vue/dist/vue.esm.js
+var vue_esm = __webpack_require__(1);
 
-// CONCATENATED MODULE: ./src/utils/ArrayList.js
+// CONCATENATED MODULE: ../utils/ArrayList.js
 //ArrayList.js
 var ArrayList = (function ArrayList() {
 
@@ -11708,7 +11707,7 @@ var ArrayList = (function ArrayList() {
 })();
 
 
-// CONCATENATED MODULE: ./src/utils/HashMap.js
+// CONCATENATED MODULE: ../utils/HashMap.js
 //HashMap.js
 var HashMap = (function () {
 
@@ -11847,7 +11846,7 @@ var HashMap = (function () {
 
 })();
 
-// CONCATENATED MODULE: ./src/events/EventManager.js
+// CONCATENATED MODULE: ../events/EventManager.js
 
 
 
@@ -12004,7 +12003,7 @@ var EventManager = (function (global) {
 })();
 
 
-// CONCATENATED MODULE: ./src/utils/SortedMap.js
+// CONCATENATED MODULE: ../utils/SortedMap.js
 class SortedMap {
   constructor() {
     this.keys = []
@@ -12095,7 +12094,7 @@ class SortedMap {
     this.values = {}
   }
 }
-// CONCATENATED MODULE: ./node_modules/vue-router/dist/vue-router.esm.js
+// CONCATENATED MODULE: D:/worklist/hyd-framework/node_modules/vue-router/dist/vue-router.esm.js
 /*!
   * vue-router v3.1.6
   * (c) 2020 Evan You
@@ -14922,7 +14921,7 @@ if (inBrowser && window.Vue) {
 
 /* harmony default export */ var vue_router_esm = (VueRouter);
 
-// CONCATENATED MODULE: ./src/hyd/hyd.js
+// CONCATENATED MODULE: ../hyd/hyd.js
 
 
 
@@ -14944,13 +14943,15 @@ var hyd_HYD = (function () {
       eventManager.sendEvent("ready");
     }
   }, false);
-
+  
   var HYD = {
     //html, pack js and css into independent file for one html
     //feature, pack js and css for each feature
     //file, don't pack anything, only use for development, no clear cache machanism
     deploy: "file",//WebDeployment
     eventManager: eventManager,
+    _viewPrototype: vue_esm["a" /* default */],
+
 
     nsf: function (namespaceFile) {
       var name = namespaceFile;
@@ -15028,11 +15029,11 @@ var hyd_HYD = (function () {
     },
 
     use: function (external, options) {
-      vue_esm["a" /* default */] && vue_esm["a" /* default */].use && vue_esm["a" /* default */].use(external, options);
+      this._viewPrototype.use(external, options)
     },
 
     registerGlobalPerm: function (key, obj) {
-      vue_esm["a" /* default */].use(function (v) {
+      this._viewPrototype.use(function (v) {
         v.mixin({
           beforeCreate() {
             this.public = {}
@@ -15134,6 +15135,7 @@ var hyd_HYD = (function () {
       }
     },
     initFeature: function (elmnt, obj) {
+      const scope = this
       var featureObj = obj
       var file, loaded, xhttp, id, jsFile;
       /*search for elements with a certain atrribute:*/
@@ -15211,7 +15213,6 @@ var hyd_HYD = (function () {
           id = hyd.generateId();
           elmnt.setAttribute("id", id);
         }
-
         var createFeature = function (feature, target, featureParams) {
           var sendEvent = function (type, obj) {
             hyd.eventManager.sendEvent(type, obj);
@@ -15285,7 +15286,7 @@ var hyd_HYD = (function () {
               feature.onCreated(featureParams, featureObj);
               console.log(feature.constructor.name + " onCreated");
               if (feature.view === undefined) {
-                feature.view = new vue_esm["a" /* default */]({
+                feature.view = new scope._viewPrototype({
                   data: theData,
                   template: theTemplate,
                   components: theComponents,
@@ -15396,7 +15397,7 @@ var hyd_HYD = (function () {
     });
      */
     component: function (name, component) {
-      vue_esm["a" /* default */].component(name, component);
+      this._viewPrototype.component(name, component);
     },
     asyncFeature: function (name, asyncImport) {
       if (name == undefined || asyncImport == undefined)
@@ -15682,6 +15683,10 @@ var hyd_HYD = (function () {
     }
   };
 
+  // HYD._viewPrototype.config.ignoredElements = [
+  //   "feature-view"
+  // ]
+
   return HYD;
 })();
 var hyd = hyd_HYD;
@@ -15692,7 +15697,7 @@ hyd.HashMap = HashMap
 
 
 
-// CONCATENATED MODULE: ./src/index.js
+// CONCATENATED MODULE: ../index.js
 /*
  * @Author: ZerroRt
  * @lastEditors: ZerroRt
@@ -15705,7 +15710,7 @@ hyd.HashMap = HashMap
 if(!window.hyd)
   window.hyd = hyd
 
-  /* harmony default export */ var src = __webpack_exports__["default"] = (hyd);
+  /* harmony default export */ var index = __webpack_exports__["default"] = (hyd);
 
 
 /***/ })

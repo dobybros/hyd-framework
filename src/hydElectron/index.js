@@ -122,11 +122,12 @@ const devConfig = {
 const mergedConfig = merge(webpackConfig, devConfig, {mode: projectEnv}, customWebpackConfigs || {})
 processOptions(mergedConfig, {}, (handledConfig, options) => {
   let compiler
+  console.log(handledConfig.module.rules)
   try {
     compiler = webpack(handledConfig)
     if (!debug) {
-      compiler.run(() => {
-        
+      compiler.run(err => {
+        console.log(err)
       })
     }
   } catch (err) {
