@@ -2,7 +2,7 @@
 /coverage/
 node_modules/
 .idea/
-dist/
+.history
 ### macOS
 # General
 .DS_Store
