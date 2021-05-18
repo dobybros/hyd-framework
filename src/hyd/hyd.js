@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue from 'vue/dist/vue.esm.js'
 import { ArrayList } from "../utils/ArrayList";
 import { HashMap } from "../utils/HashMap";
 import { EventManager } from "../events/EventManager";
