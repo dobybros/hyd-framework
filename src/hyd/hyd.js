@@ -223,6 +223,7 @@ var HYD = (function () {
         if (featureJs) {
           var result = document.querySelectorAll('script[src="' + featureJs + '"]');
           if (result.length === 0) {
+            // 如果当前页面没有引入目标feature，就添加一个script标签帮他引进来
             var oHead = document.getElementsByTagName('HEAD').item(0);
             var oScript = document.createElement("script");
             oScript.type = "text/javascript";

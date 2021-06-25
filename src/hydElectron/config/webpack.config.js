@@ -27,6 +27,9 @@ module.exports = {
     port: defaultConfig.devServer.port,
     hot: true
   },
+  optimization: {
+    minimize: false
+  },
   devtool: "source-map",
   module: {
     rules: [{
