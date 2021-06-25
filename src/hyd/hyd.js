@@ -1,7 +1,7 @@
 import Vue from 'vue/dist/vue.esm.js'
-import { ArrayList } from "../utils/ArrayList";
-import { HashMap } from "../utils/HashMap";
-import { EventManager } from "../events/EventManager";
+import {ArrayList} from "../utils/ArrayList";
+import {HashMap} from "../utils/HashMap";
+import {EventManager} from "../events/EventManager";
 import SortedMap from "../utils/SortedMap";
 import VueRouter from 'vue-router'
 
@@ -170,7 +170,7 @@ var HYD = (function () {
         this.eventObserverMap[key] = list
       }
       for (var i = 0; i < theTypes.length; i++) {
-        list.add({ observer: observer, type: theTypes[i] })
+        list.add({observer: observer, type: theTypes[i]})
         hyd.eventManager.registerEvent(theTypes[i], observer)
       }
 
@@ -194,7 +194,7 @@ var HYD = (function () {
     sendEvent: function (type, obj) {
       hyd.eventManager.sendEvent(type, obj);
     },
-    sendInternalEvent: function(type, object) {
+    sendInternalEvent: function (type, object) {
       const eventDontNeedToBeBoardCast = true
       this.sendEvent(type, object, eventDontNeedToBeBoardCast)
     },
@@ -360,12 +360,15 @@ var HYD = (function () {
               feature.onCreated(featureParams, featureObj);
               console.log(feature.constructor.name + " onCreated");
               if (feature.view === undefined) {
-                feature.view = new scope._viewPrototype({
+                let options = {
                   data: theData,
                   template: theTemplate,
-                  components: theComponents,
-                  router: new VueRouter(router)
-                });
+                  components: theComponents
+                }
+                if (router) {
+                  options.router = new VueRouter(router)
+                }
+                feature.view = new scope._viewPrototype(options);
                 // 								var view = new feature.view();
                 // 								feature.view.feature = feature;
               }
@@ -603,7 +606,7 @@ var HYD = (function () {
         // register requestEvent
         hyd.registerEvent(this._remoteFunctionObserverMap[type].id, this._remoteFunctionObserverMap[type].requestEvent, {
           scope: this,
-          callback(event, { remoteId, data }) {
+          callback(event, {remoteId, data}) {
             // 防止remote的方法名里也有Request
             let remoteFunction = event.split('Request')
             remoteFunction.pop()
@@ -612,7 +615,7 @@ var HYD = (function () {
             if (remoteFunction && this._remoteFunctionObserverMap[remoteFunction]) {
               let remoteObj = this._remoteFunctionObserverMap[remoteFunction]
               remoteObj.callback(data, result => {
-                hyd.sendEvent(this._remoteFunctionObserverMap[type].responseEvent, { remoteId, result })
+                hyd.sendEvent(this._remoteFunctionObserverMap[type].responseEvent, {remoteId, result})
               })
             }
           }
@@ -641,13 +644,13 @@ var HYD = (function () {
           let remoteId = this.generateId()
           // 可能存在泄露
           let targetObj = {
-            callback: function() {
+            callback: function () {
               try {
                 let remoteFunctionObj = this.scope._remoteFunctionPromiseMap[this.type][this.remoteId]
                 if (remoteFunctionObj) {
                   remoteFunctionObj.promise.reject(-1)
                   delete this.scope._remoteFunctionPromiseMap[this.type][this.remoteId]
-                  if(Object.keys(this.scope._remoteFunctionPromiseMap[this.type]).length === 0) {
+                  if (Object.keys(this.scope._remoteFunctionPromiseMap[this.type]).length === 0) {
                     hyd.unregisterEvent(this.type + 'Response')
                   }
                 }
@@ -658,7 +661,7 @@ var HYD = (function () {
             type,
             remoteId,
             lastTimeout: Date.now() + timeout,
-            promise: { resolve, reject },
+            promise: {resolve, reject},
             scope: this,
           }
           targetObj.timeout = setTimeout(targetObj.callback.bind(targetObj), timeout)
@@ -667,7 +670,7 @@ var HYD = (function () {
           if (Object.keys(this._remoteFunctionPromiseMap[type]).length === 1) {
             hyd.registerEvent(type + 'Response', type + 'Response', {
               scope: this,
-              callback(event, { remoteId, result }) {
+              callback(event, {remoteId, result}) {
                 const remoteFunction = event.split('Response')[0]
                 if (this._remoteFunctionPromiseMap[remoteFunction]) {
                   let remoteObj = this._remoteFunctionPromiseMap[remoteFunction][remoteId]
