@@ -48,6 +48,7 @@ class FeatureWindow extends HydWindow {
         webPreferences: {
           devTools: true,
           nodeIntegration: true,
+          contextIsolation: false,
           enableRemoteModule: true,
         },
         show: false,

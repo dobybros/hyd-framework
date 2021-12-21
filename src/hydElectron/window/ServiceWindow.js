@@ -31,7 +31,8 @@ class ServiceWindow extends HydWindow {
         show: false,
         webPreferences: {
           // devTools: true,
-          nodeIntegration: true
+          nodeIntegration: true,
+          contextIsolation: false,
         },
       }, this._serviceDefine.window))
       this._electronWindow = window
