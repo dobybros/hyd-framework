@@ -140,8 +140,8 @@ class HydElectron {
   _registerEvents() {
     ipcMain.on('hydEvent.hydReady', (event, message) => {
       event.reply('hydEvent.initHydRoot', {
-        name: path.basename(handlePathToName(event.sender.history[0], '.html')),
-        type: path.basename(handlePathToName(event.sender.history[0], '.html', true))
+        name: path.basename(handlePathToName(event.sender.getURL(), '.html')),
+        type: path.basename(handlePathToName(event.sender.getURL(), '.html', true))
       })
     })
   }
