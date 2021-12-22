@@ -16,7 +16,8 @@ module.exports = {
   mode: "production",
   entry: {
     'hyd': path.resolve(__dirname, '../../../dist/hyd.js'),
-    'hyd-electron': path.resolve(__dirname, '../HydElectronRenderer.js')
+    'hyd-electron': path.resolve(__dirname, '../HydElectronRenderer.js'),
+    'hyd-electron-remote-require': path.resolve(__dirname, '../utils/HydElectronRemoteRequire.js'),
   },
   output: {
     path: defaultConfig.output.path,

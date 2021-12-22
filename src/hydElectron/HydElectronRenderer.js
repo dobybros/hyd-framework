@@ -1,6 +1,4 @@
 const {ipcRenderer} = require('electron')
-// remote has been removed from electron since electron v14.0.0
-const remote = (window && window.electronRemote) ||  require('@electron/remote')
 
 class HydElectronRenderer {
   constructor() {
@@ -13,6 +11,12 @@ class HydElectronRenderer {
     this._registerCommunication()
 
     window.launch = this.launch.bind(this)
+  }
+
+  static getRemoteApi() {
+    // remote has been removed from electron since electron v14.0.0
+    const remote = window && window.electronRemote
+    return remote
   }
 
   static random(len, radix) {
@@ -202,7 +206,7 @@ class HydElectronRenderer {
   shutdown() {
     try {
       if (!this._currentWindow) {
-        this._currentWindow = remote.getCurrentWindow()
+        this._currentWindow = HydElectronRenderer.getRemoteApi().getCurrentWindow()
       }
       this._currentWindow.destroy()
     } catch (error) {
@@ -211,14 +215,14 @@ class HydElectronRenderer {
   }
   setAlwaysOnTop(flag, level) {
     if (!this._currentWindow) {
-      this._currentWindow = remote.getCurrentWindow()
+      this._currentWindow = HydElectronRenderer.getRemoteApi().getCurrentWindow()
     }
     this._currentWindow.setAlwaysOnTop(flag, level)
   }
 
   focus() {
     if (!this._currentWindow) {
-      this._currentWindow = remote.getCurrentWindow()
+      this._currentWindow = HydElectronRenderer.getRemoteApi().getCurrentWindow()
     }
     try {
       this._currentWindow.show()
@@ -230,14 +234,14 @@ class HydElectronRenderer {
 
   setWindowPassthrough(pass) {
     if (!this._currentWindow) {
-      this._currentWindow = remote.getCurrentWindow()
+      this._currentWindow = HydElectronRenderer.getRemoteApi().getCurrentWindow()
     }
     this._currentWindow.setIgnoreMouseEvents(pass, pass?{forward: true}:undefined)
   }
 
   setWindowSize({ width, height }) {
     if (!this._currentWindow) {
-      this._currentWindow = remote.getCurrentWindow()
+      this._currentWindow = HydElectronRenderer.getRemoteApi().getCurrentWindow()
     }
     const beforeResizable = this._currentWindow.resizable
     this._currentWindow.resizable = true

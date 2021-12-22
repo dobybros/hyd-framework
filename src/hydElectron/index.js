@@ -88,7 +88,7 @@ if (features && features.length) {
     const plugin = new HtmlWebpackPlugin({
       template,
       filename: featureDefine.filename || (name + '.feature.html'),
-      chunks: ['hyd', 'hyd-electron', name + '.feature']
+      chunks: ['hyd-electron-remote-require', 'hyd', 'hyd-electron', name + '.feature']
     })
     plugins.push(plugin)
     entry[name + '.feature'] = absolutePath
@@ -105,7 +105,7 @@ if (services && services.length) {
     const plugin = new HtmlWebpackPlugin({
       template,
       filename: name + '.service.html',
-      chunks: ['hyd-electron', name + '.service',]
+      chunks: ['hyd-electron-remote-require', 'hyd-electron', name + '.service',]
     })
     plugins.push(plugin)
     entry[name + '.service'] = absolutePath
