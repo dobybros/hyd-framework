@@ -11,9 +11,10 @@ const path = require('path')
 const eventManager = require('../EventManager').getInstance()
 
 class FeatureWindow extends HydWindow {
-  constructor(featureDefine, debug, webpackConfig) {
+  constructor(featureDefine, debug, webpackConfig, remoteEnable) {
     super('feature', debug, webpackConfig)
     this._featureDefine = featureDefine
+    this.remoteEnable = remoteEnable
     this._electronWindow = null
     this._initFeatureWindow()
     this.debug = debug
@@ -76,6 +77,10 @@ class FeatureWindow extends HydWindow {
       const window = new BrowserWindow(renderWindowConfig)
       this.showAfterCreate = showAfterCreate
       this._electronWindow = window
+
+      if (this.remoteEnable && this.remoteEnable.enable) {
+        this.remoteEnable.enable(window.webContents)
+      }
 
       this._loadWindow(path.basename(this._featureDefine.feature.path, '.js'))
       this._electronWindow.on('close', event => {

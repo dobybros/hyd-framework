@@ -28,9 +28,13 @@ class HydElectron {
     this.debug = debug
   }
 
-  static getInstance(manifest, debug) {
+  static getInstance(manifest, debug, remoteEnable) {
     if (!instance) {
       instance = new HydElectron(manifest, debug)
+    }
+
+    if (!this.remoteEnable) {
+      this.remoteEnable = remoteEnable
     }
     return instance
   }
@@ -41,7 +45,7 @@ class HydElectron {
       if (this._services[serviceName]) {
         throw new Error("Duplicate service found, name " + serviceName)
       }
-      let window = new ServiceWindow(serviceDefine, this.debug, this.webpackConfig)
+      let window = new ServiceWindow(serviceDefine, this.debug, this.webpackConfig, this.remoteEnable)
       if (!serviceDefine.event) {
         window.generate()
       }
@@ -55,7 +59,7 @@ class HydElectron {
       if (this._features[featureName]) {
         throw new Error("Duplicate feature found, name " + featureName)
       }
-      let window = new FeatureWindow(featureDefine, this.debug, this.webpackConfig)
+      let window = new FeatureWindow(featureDefine, this.debug, this.webpackConfig, this.remoteEnable)
       if (featureDefine.main) {
         window.generate()
       }

@@ -73,6 +73,14 @@ class HydWindow {
     }
   }
 
+  enableRemoteRequire(electronRemoteMain) {
+    if (electronRemoteMain && electronRemoteMain.enable) {
+      if (this._electronWindow) {
+        electronRemoteMain.enable(this._electronWindow.webContents)
+      }
+    }
+  }
+
   generateWindowFromEvent(data, done, eventName) {
     this._preHandleEvents[eventName] = this._preHandleEvents[eventName] || []
     this._preHandleEvents[eventName].push(data)

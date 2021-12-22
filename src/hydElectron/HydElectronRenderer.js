@@ -1,5 +1,6 @@
 const {ipcRenderer} = require('electron')
-const remote = require('electron').remote
+// remote has been removed from electron since electron v14.0.0
+const remote = (window && window.electronRemote) ||  require('@electron/remote')
 
 class HydElectronRenderer {
   constructor() {
