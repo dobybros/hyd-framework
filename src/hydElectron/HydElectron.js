@@ -33,8 +33,8 @@ class HydElectron {
       instance = new HydElectron(manifest, debug)
     }
 
-    if (!this.remoteEnable) {
-      this.remoteEnable = remoteEnable
+    if (!instance.remoteEnable) {
+      instance.remoteEnable = remoteEnable
     }
     return instance
   }
