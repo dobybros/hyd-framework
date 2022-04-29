@@ -75,7 +75,6 @@ class FeatureWindow extends HydWindow {
         // renderWindowConfig.parent = this._mainWindow
       }
       const window = new BrowserWindow(renderWindowConfig)
-      window.setContentProtection(true)
       this.showAfterCreate = showAfterCreate
       this._electronWindow = window
 
