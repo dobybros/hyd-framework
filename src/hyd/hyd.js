@@ -213,7 +213,16 @@ var HYD = (function () {
       var file, loaded, xhttp, id, jsFile;
       /*search for elements with a certain atrribute:*/
       console.info('hyd-feature attributes like "template", "js", "loaded", "id", "fid" are reserved, please avoid to use above attributes for feature paramaters')
+      
       jsFile = elmnt.getAttribute("name");
+      if (jsFile === 'SideBarParticipantsTh' || jsFile === 'SideBarParticipantsEn'){
+        jsFile = 'SideBarParticipants';
+      } else if (jsFile === 'SideBarChatEn' || jsFile === 'SideBarChatTh'){
+        jsFile ='SideBarChat';
+      }else{
+        jsFile = elmnt.getAttribute("name");
+      }
+      
       if (!this.features) {
         this.features = {}
       }
