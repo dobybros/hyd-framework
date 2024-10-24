@@ -26,6 +26,6 @@
   },
   "dependencies": {
     "hyd-loader": "file:../hyd-loader",
-    "vue": "2.6.10"
+    "vue": "3.0.0"
   }
 }
